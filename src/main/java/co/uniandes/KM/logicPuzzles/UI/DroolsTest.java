@@ -1,4 +1,4 @@
-package com.sample;
+package co.uniandes.KM.logicPuzzles.UI;
 
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;

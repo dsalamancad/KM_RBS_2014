@@ -1,4 +1,4 @@
-package com.sample;
+package co.uniandes.KM.logicPuzzles.UI;
 
 import javax.swing.*;
 

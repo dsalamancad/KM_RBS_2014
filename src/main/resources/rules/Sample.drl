@@ -1,6 +1,6 @@
 package com.sample
  
-import com.sample.DroolsTest.Message;
+import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
  
 rule "Hello World"
     when

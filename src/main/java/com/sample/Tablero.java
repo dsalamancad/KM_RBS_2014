@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 public class Tablero extends JFrame implements ActionListener {
 	/**
-	 * 
+	 * Soy un comentario
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel nombreHorizontal, nombreVertical;

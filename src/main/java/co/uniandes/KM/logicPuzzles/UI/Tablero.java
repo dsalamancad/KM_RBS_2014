@@ -5,16 +5,24 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class Tablero extends JFrame implements ActionListener {
-
+    
     static final long serialVersionUID = 1L;
     private JLabel    nombreHorizontal, nombreVertical;
     private JButton   fila1A, fila2A, fila3A, fila4A, fila1B, fila2B, fila3B,
             fila4B, fila1C, fila2C, fila3C, fila4C;
 
-    public Tablero() {
+    public Tablero(String[][] dimensions) {
         setLayout(null);
         int posX = 30;
-        String etiquetas[] = { "a", "b", "c", "d", "1", "2", "3", "4", "w", "x", "y", "z" };
+        
+        String etiquetas[] = new String[12];
+        
+        for (int i = 0; i < dimensions.length; i++) {
+            for (int j = 0; j < dimensions[i].length-1; j++) {
+                etiquetas[j+(i*dimensions.length)] = dimensions[i][j+1];
+            }
+        }
+        
         String botones[] = { "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14", "a15", "a16" };
         JButton filas[] = { fila1A, fila2A, fila3A, fila4A, fila1B, fila2B, fila3B, fila4B, fila1C, fila2C, fila3C, fila4C };
 
@@ -70,10 +78,8 @@ public class Tablero extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        Tablero miTablero = new Tablero();
-        miTablero.setBounds(10, 10, 960, 580);
-        miTablero.setVisible(true);
-        miTablero.setResizable(false);
+        DimensionDataInput dDI = new DimensionDataInput();
+        dDI.setVisible(true);
 
     }
 

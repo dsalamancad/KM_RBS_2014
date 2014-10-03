@@ -1,7 +1,15 @@
 package com.sample
  
 import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
- 
+import co.uniandes.KM.logicPuzzles.mundo.*;
+		
+rule "Positive elimination"
+	when
+		c : Cell( status == Cell.UNKNOWN )
+	then
+		System.out.println( "I'm a strong independent cell" );
+end
+
 rule "Hello World"
     when
         m : Message( status == Message.HELLO, myMessage : message )

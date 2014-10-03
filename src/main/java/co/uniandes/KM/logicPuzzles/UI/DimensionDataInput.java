@@ -25,13 +25,21 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     
     private JButton buttonSiguiente;
     private JTextArea textArea;
+    
+    /**
+     * 
+     */
     private final static Pattern DIMENSION_PATTERN = Pattern.compile("((?:\\w+\\s*)+):\\s(\\w+),\\s(\\w+),\\s(\\w+),\\s(\\w+)[?:\\n|\\r]");
+    
     private LogicDimension[] dimensions;
     
+    private Tablero tablero;
     
-    public DimensionDataInput()
+    
+    public DimensionDataInput(Tablero tablero)
     {
         super();
+        this.tablero = tablero;
         dimensions = new LogicDimension[Configuration.DIMENSION_AMOUNT];
         setLayout(new BorderLayout(10,20));
         buttonSiguiente = new JButton("Siguiente");
@@ -58,11 +66,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("SIGUIENTE"))
         {
-            Tablero miTablero = new Tablero(dimensions);
-            miTablero.setBounds(10, 10, 960, 580);
-            miTablero.setVisible(true);
-            miTablero.setResizable(false);
-            miTablero.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            tablero.initialize(dimensions);
             this.dispose();
         }
 
@@ -81,10 +85,9 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
             currentDimensionName = data[0];
             data = data[1].split(",");
             for (int i = 0; i < data.length; i++) {
-                currentDimensionItems[i] = data[i];
+                currentDimensionItems[i] = data[i].trim();
             }
             dimensions[counter] = new LogicDimension(currentDimensionName, currentDimensionItems);
-            System.out.println(dimensions[counter]);
             counter++;
         }
         

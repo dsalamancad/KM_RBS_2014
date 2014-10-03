@@ -1,7 +1,6 @@
 package co.uniandes.KM.logicPuzzles.UI;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,12 +30,20 @@ public class Tablero extends JFrame implements ActionListener {
     private JPanel board;
     private JPanel factList;
 
-    public Tablero(LogicDimension[] dimensions) {
-        
-        BorderLayout borderLayout = new BorderLayout();
+    public Tablero() {
+    	DimensionDataInput dDI = new DimensionDataInput(this);
+        dDI.setVisible(true);
+    }
+
+	/**
+	 * @param dimensions
+	 */
+	public void initialize(LogicDimension[] dimensions) {
+		
+		this.logicPuzzle = new LogicPuzzle(dimensions);
+		
+		BorderLayout borderLayout = new BorderLayout();
         setLayout(borderLayout);
-        
-        logicPuzzle = new LogicPuzzle(dimensions);
         
         board = new JPanel();
         board.setLayout(null);
@@ -112,11 +119,13 @@ public class Tablero extends JFrame implements ActionListener {
         
         add(board,BorderLayout.CENTER);
         //add(factList,FlowLayout.LEFT);
-    }
+        setBounds(10, 10, 960, 580);
+        setVisible(true);
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 
     public static void main(String[] args) {
-        DimensionDataInput dDI = new DimensionDataInput();
-        dDI.setVisible(true);
 
     }
 
@@ -125,5 +134,13 @@ public class Tablero extends JFrame implements ActionListener {
         // TODO Auto-generated method stub
 
     }
+
+	public LogicPuzzle getLogicPuzzle() {
+		return logicPuzzle;
+	}
+
+	public void setLogicPuzzle(LogicPuzzle logicPuzzle) {
+		this.logicPuzzle = logicPuzzle;
+	}
 
 }

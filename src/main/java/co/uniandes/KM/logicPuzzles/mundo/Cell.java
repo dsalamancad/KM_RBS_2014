@@ -12,6 +12,7 @@ public class Cell {
 	public final static String UNKNOWN = "?";
 	public final static String TRUE = "O";
 	public final static String IMPOSSIBLE = "X";
+	public final static String POSSIBLE = "P";
 	
 	private String status;
 	
@@ -20,6 +21,8 @@ public class Cell {
 	public Cell(String status, int x, int y, int z) {
 		super();
 		this.status = status;
+		if(status==null)
+			status = UNKNOWN;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -80,10 +83,4 @@ public class Cell {
 	public void setZ(int z) {
 		this.z = z;
 	}
-
-	
-	
-	
-	
-
 }

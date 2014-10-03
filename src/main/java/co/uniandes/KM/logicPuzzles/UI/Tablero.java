@@ -16,7 +16,7 @@ public class Tablero extends JFrame implements ActionListener {
         int posX = 30;
         
         String etiquetas[] = new String[12];
-        /* porque es esto? */
+        
         for (int i = 0; i < dimensions.length; i++) {
             for (int j = 0; j < dimensions[i].length-1; j++) {
                 etiquetas[j+(i*dimensions.length)] = dimensions[i][j+1];

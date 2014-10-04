@@ -2,12 +2,16 @@ package com.sample
  
 import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
 import co.uniandes.KM.logicPuzzles.mundo.*;
+import java.util.ArrayList;
 		
 rule "Positive elimination"
 	when
-		c : Cell( status == Cell.UNKNOWN )
+		c : Cell( status == Cell.TRUE )
+		neighboringCells :  ArrayList()
+							from collect ( Cell ( x == c.x || y == c.y || z == c.z) )
 	then
-		System.out.println( "I'm a strong independent cell" );
+		//TODO: Actualizar el estado de las celdas y alimentar los nuevos hechos a la sesión
+		System.out.println(neighboringCells);
 end
 
 rule "Hello World"

@@ -2,10 +2,8 @@ package co.uniandes.KM.logicPuzzles.UI;
 
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -39,10 +37,14 @@ public class Tablero extends JFrame implements ActionListener {
     }
 
     /**
-     * @param dimensions
+     * Initialize GridBag constraints, main layout manager, backend and main panels.
+     * @param dimensions Array of {@link LogicDimension} grabbed from user input
      */
     public void initialize(LogicDimension[] dimensions) {
-
+        
+        if(dimensions==null)
+            System.exit(1);
+        
         this.logicPuzzle = new LogicPuzzle(dimensions);
 
         BorderLayout borderLayout = new BorderLayout();
@@ -70,31 +72,21 @@ public class Tablero extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Creates the Board status panel, an intersection matrix with data from {@link LogicPuzzle}.getDimensions()
+     * @return {@link JPanel} A panel with the intersection matrix. Dynamic size.
+     */
     private JPanel createBoard() {
-        /*
-         * GridBagLayout es un manejador automático de la posición de
-         * componentes gráficos. Cada vez que ingrese un JLabel (o cualquier
-         * componente) lo ingreso en una cuadrícula invisible y lo posiciono de
-         * acuerdo con dos criterios: Posición y "tamaño". La posición es un x,y
-         * relativa a la cuadrícula ( [0,0] para el primer elemento, etc). El
-         * tamaño es la cantidad de filas y columnas que ocupará el componente.
-         * Ambos criterios se mandan con un objeto GridBagConstraints que se
-         * modifica justo antes de ingresar el componente. El objeto tiene seis
-         * propiedades relevantes:
-         * Tamaño -> gridheight, gridwidth 
-         * Posición -> gridx, gridy 
-         * Tamaño mínimo(px) -> ipadx,ipady
-         * 
-         * Cuando se agrega un componente, se vé así: add(componente, gridBagConstraints);
-         */
+        LogicDimension[] dimensions = logicPuzzle.getDimensions();
+
         GridBagLayout gBL = new GridBagLayout();
         JPanel board = new JPanel();
         board.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         board.setLayout(gBL);
 
-        LogicDimension[] dimensions = logicPuzzle.getDimensions();
-
-        // Drawing help
+        // =================================================================================================
+        // START: Initialization of drawing aids
+        // =================================================================================================
         int horizontalThreshold = Configuration.DIMENSION_AMOUNT - 1;
         int currentRow = 0;
         int currentColumn = 0;
@@ -117,21 +109,23 @@ public class Tablero extends JFrame implements ActionListener {
         for (int i = 0; i < yAxisDimensionIndexes.length; i++) {
             yAxisDimensionIndexes[i] = i + 1;
         }
-
+        // =================================================================================================
+        // END: Initialization of drawing aids
+        // =================================================================================================
+        
+        // =================================================================================================
+        // START: Drawing of the board
+        // =================================================================================================
         for (int i = 0; i < dimensions.length; i++) {
-
             if ((currentColumn + 1) > horizontalThreshold) {
                 horizontalThreshold--;
                 currentRow++;
                 currentColumn = 0;
             }
-
             LogicDimension currentDimensionX = dimensions[xAxisDimensionIndexes[currentColumn]];
             LogicDimension currentDimensionY = dimensions[yAxisDimensionIndexes[currentRow]];
-
             int xOffset = currentColumn * Configuration.ITEM_PER_DIMENSION_AMOUNT;
             int yOffset = currentRow * Configuration.ITEM_PER_DIMENSION_AMOUNT;
-
             // I only need to draw the labels when either currentRow or currentColumn is 0
             if (currentRow == 0) {
                 drawHorizontalSectionLabels(board, currentDimensionX, xOffset, yOffset);
@@ -145,10 +139,20 @@ public class Tablero extends JFrame implements ActionListener {
             }
             currentColumn++;
         }
-
+        // =================================================================================================
+        //END: Drawing of the board
+        // =================================================================================================
         return board;
     }
     
+    /**
+     * Draws the labels for both the parameter supplied dimension and its items.<br>
+     * Labels are horizontal for the dimension and vertical for the items.
+     * @param board {@link JPanel} to which the labels will be added. Must use a {@link GridBagLayout}
+     * @param currentDimension Dimension whose labels will be drawn
+     * @param xOffset Cell offset for the layout on the X axis
+     * @param yOffset Cell offset for the layout on the Y axis
+     */
     private void drawHorizontalSectionLabels(JPanel board, LogicDimension currentDimension, int xOffset, int yOffset) {
         String[] currentItems;
         RotatedLabel dimensionLabel;
@@ -172,6 +176,14 @@ public class Tablero extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Draws the labels for both the parameter supplied dimension and its items.<br>
+     * Labels are vertical for the dimension and horizontal for the items.
+     * @param board {@link JPanel} to which the labels will be added. Must use a {@link GridBagLayout}
+     * @param currentDimension Dimension whose labels will be drawn
+     * @param xOffset Cell offset for the layout on the X axis
+     * @param yOffset Cell offset for the layout on the Y axis
+     */
     private void drawVerticalSectionLabels(JPanel board, LogicDimension currentDimension, int xOffset, int yOffset) {
         String[] currentItems;
         RotatedLabel dimensionLabel;
@@ -195,6 +207,13 @@ public class Tablero extends JFrame implements ActionListener {
         }
     }
     
+    /**
+     * Draws a {@link Configuration}.ITEM_PER_DIMENSION_AMOUNT² cell grid <br>
+     * TODO Link cells with backend
+     * @param board {@link JPanel} to which the labels will be added. Must use a {@link GridBagLayout}
+     * @param xOffset Cell offset for the layout on the X axis
+     * @param yOffset Cell offset for the layout on the Y axis
+     */
     private void drawCellGrid(JPanel board, int xOffset, int yOffset) {
         for (int j = 0; j < Configuration.ITEM_PER_DIMENSION_AMOUNT; j++) {
             for (int k = 0; k < Configuration.ITEM_PER_DIMENSION_AMOUNT; k++) {

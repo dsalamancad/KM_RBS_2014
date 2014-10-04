@@ -18,5 +18,5 @@ public abstract class Configuration {
     /**
      * Ítems por dimensiones
      */
-    public final static int ITEM_PER_DIMENSION_AMOUNT = 4;
+    public final static int ITEMS_PER_DIMENSION = 4;
 }

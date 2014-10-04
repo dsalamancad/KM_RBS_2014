@@ -23,7 +23,7 @@ public class LogicPuzzle {
     public LogicPuzzle(LogicDimension[] dimensions)
     {
         this.dimensions = dimensions;
-        boardMatrix = new Cell[Configuration.ITEM_PER_DIMENSION_AMOUNT][Configuration.ITEM_PER_DIMENSION_AMOUNT][Configuration.ITEM_PER_DIMENSION_AMOUNT];
+        boardMatrix = new Cell[Configuration.ITEMS_PER_DIMENSION][Configuration.ITEMS_PER_DIMENSION][Configuration.ITEMS_PER_DIMENSION];
 		for (int i = 0; i < boardMatrix.length; i++) {
 			for (int j = 0; j < boardMatrix.length; j++) {
 				for (int k = 0; k < boardMatrix.length; k++) {

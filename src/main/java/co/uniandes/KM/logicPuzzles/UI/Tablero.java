@@ -58,12 +58,12 @@ public class Tablero extends JFrame implements ActionListener {
         singleCellConstraint.ipady = 15;
         // Configuration.ITEM_PER_DIMENSION_AMOUNT x LABEL_TITLE_SIZE
         dimensionHorizontalLabel = new GridBagConstraints();
-        dimensionHorizontalLabel.gridwidth = Configuration.ITEM_PER_DIMENSION_AMOUNT;
+        dimensionHorizontalLabel.gridwidth = Configuration.ITEMS_PER_DIMENSION;
         dimensionHorizontalLabel.gridheight = LABEL_TITLE_SIZE;
         // LABEL_TITLE_SIZE x Configuration.ITEM_PER_DIMENSION_AMOUNT
         dimensionVerticalLabel = new GridBagConstraints();
         dimensionVerticalLabel.gridwidth = LABEL_TITLE_SIZE;
-        dimensionVerticalLabel.gridheight = Configuration.ITEM_PER_DIMENSION_AMOUNT;
+        dimensionVerticalLabel.gridheight = Configuration.ITEMS_PER_DIMENSION;
 
         add(createBoard());
         setBounds(10, 10, 960, 580);
@@ -124,8 +124,8 @@ public class Tablero extends JFrame implements ActionListener {
             }
             LogicDimension currentDimensionX = dimensions[xAxisDimensionIndexes[currentColumn]];
             LogicDimension currentDimensionY = dimensions[yAxisDimensionIndexes[currentRow]];
-            int xOffset = currentColumn * Configuration.ITEM_PER_DIMENSION_AMOUNT;
-            int yOffset = currentRow * Configuration.ITEM_PER_DIMENSION_AMOUNT;
+            int xOffset = currentColumn * Configuration.ITEMS_PER_DIMENSION;
+            int yOffset = currentRow * Configuration.ITEMS_PER_DIMENSION;
             // I only need to draw the labels when either currentRow or currentColumn is 0
             if (currentRow == 0) {
                 drawHorizontalSectionLabels(board, currentDimensionX, xOffset, yOffset);
@@ -215,8 +215,8 @@ public class Tablero extends JFrame implements ActionListener {
      * @param yOffset Cell offset for the layout on the Y axis
      */
     private void drawCellGrid(JPanel board, int xOffset, int yOffset) {
-        for (int j = 0; j < Configuration.ITEM_PER_DIMENSION_AMOUNT; j++) {
-            for (int k = 0; k < Configuration.ITEM_PER_DIMENSION_AMOUNT; k++) {
+        for (int j = 0; j < Configuration.ITEMS_PER_DIMENSION; j++) {
+            for (int k = 0; k < Configuration.ITEMS_PER_DIMENSION; k++) {
                 JLabel cellLabel = new JLabel("?");
                 cellLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 // The x position is 'j' plus the amount of items already drawn

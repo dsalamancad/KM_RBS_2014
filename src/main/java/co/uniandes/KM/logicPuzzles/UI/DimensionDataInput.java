@@ -81,7 +81,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         while(matcher.find())
         {
             String[] data = matcher.group().split(":");
-            String[] currentDimensionItems = new String[Configuration.ITEM_PER_DIMENSION_AMOUNT];
+            String[] currentDimensionItems = new String[Configuration.ITEMS_PER_DIMENSION];
             currentDimensionName = data[0];
             data = data[1].split(",");
             for (int i = 0; i < data.length; i++) {

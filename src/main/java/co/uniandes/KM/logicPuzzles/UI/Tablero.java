@@ -73,9 +73,10 @@ public class Tablero extends JFrame implements ActionListener {
          * El tamaño es la cantidad de filas y columnas que ocupará el componente.
          * Ambos criterios se mandan con un objeto GridBagConstraints que se modifica justo antes de
          * ingresar el componente.
-         * El objeto tiene cuatro propiedades relevantes:
+         * El objeto tiene seis propiedades relevantes:
          * Tamaño -> gridheight, gridwidth
          * Posición -> gridx, gridy
+         * Tamaño mínimo(px) -> ipadx,ipady
          * 
          * Cuando se agrega un componente, se vé así:   add(componente, gridBagConstraints);
          */

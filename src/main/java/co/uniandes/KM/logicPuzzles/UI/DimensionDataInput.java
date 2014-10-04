@@ -60,6 +60,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         textArea.setPreferredSize(new Dimension(400,200));
         textArea.setLocation(10, 40 );
         textArea.addKeyListener(this);
+        this.keyTyped(null);
         add(textArea,BorderLayout.CENTER);
         
         pack();

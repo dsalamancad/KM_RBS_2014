@@ -51,7 +51,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         buttonSiguiente.addActionListener(this);
         add(buttonSiguiente,BorderLayout.SOUTH);
         
-        textArea = new JTextArea("Dimension 1: A1, A2, A3, A4\nDimension 2: B1, B2, B3, B4\nDimension 3: C1, C2, C3, C4");
+        textArea = new JTextArea("Names: Chester, Melvin, Nathan, Victor\nTimes: 900am, 1000am, 1100am, 12noon\nAilments: backpain, hippain, migraines, shingles");
         textArea.setSize(100, 60);
         textArea.setMinimumSize(new Dimension(100,60));
         textArea.setLocation(10, 40 );
@@ -77,7 +77,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         Matcher matcher = DIMENSION_PATTERN.matcher(textArea.getText());
         int counter = 0;
         String currentDimensionName = "";
-        
+        int longestString = 0;
         while(matcher.find())
         {
             String[] data = matcher.group().split(":");
@@ -86,6 +86,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
             data = data[1].split(",");
             for (int i = 0; i < data.length; i++) {
                 currentDimensionItems[i] = data[i].trim();
+                if (currentDimensionItems[i].length() > longestString) longestString = currentDimensionItems[i].length();
             }
             dimensions[counter] = new LogicDimension(currentDimensionName, currentDimensionItems);
             counter++;

@@ -19,7 +19,10 @@ public class LogicPuzzlesMain {
 	private KieSession kSession;
 	private LogicPuzzle logicPuzzle;
 	
-	public LogicPuzzlesMain() {
+	public LogicPuzzlesMain(int dimensions, int itemsPerDimension) {
+	    Configuration.DIMENSION_AMOUNT = dimensions;
+	    Configuration.ITEMS_PER_DIMENSION = itemsPerDimension;
+	    
 		//Initialize UI
 		Tablero tablero = new Tablero();
 		tablero.setVisible(true);
@@ -28,7 +31,6 @@ public class LogicPuzzlesMain {
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -57,7 +59,9 @@ public class LogicPuzzlesMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LogicPuzzlesMain lpm = new LogicPuzzlesMain();
+	    int dimensions = args.length == 2 ? Integer.parseInt(args[0]):3;
+	    int itemsPerDimension = args.length == 2 ? Integer.parseInt(args[1]):3;
+		LogicPuzzlesMain lpm = new LogicPuzzlesMain(dimensions, itemsPerDimension);
 	}
 
 }

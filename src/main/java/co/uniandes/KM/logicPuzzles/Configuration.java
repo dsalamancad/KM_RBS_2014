@@ -12,11 +12,11 @@ public abstract class Configuration {
     /**
      * Cantidad de dimensiones
      */
-    public final static int DIMENSION_AMOUNT = 3;
+    public static int DIMENSION_AMOUNT;
     
     
     /**
      * Ítems por dimensiones
      */
-    public final static int ITEMS_PER_DIMENSION = 4;
+    public static int ITEMS_PER_DIMENSION;
 }

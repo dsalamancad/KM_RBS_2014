@@ -60,7 +60,7 @@ public class LogicPuzzlesMain {
 	 */
 	public static void main(String[] args) {
 	    int dimensions = args.length == 2 ? Integer.parseInt(args[0]):3;
-	    int itemsPerDimension = args.length == 2 ? Integer.parseInt(args[1]):3;
+	    int itemsPerDimension = args.length == 2 ? Integer.parseInt(args[1]):4;
 		LogicPuzzlesMain lpm = new LogicPuzzlesMain(dimensions, itemsPerDimension);
 	}
 

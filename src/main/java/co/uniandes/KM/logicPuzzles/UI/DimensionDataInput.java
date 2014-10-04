@@ -29,7 +29,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     /**
      * 
      */
-    private final static Pattern DIMENSION_PATTERN = Pattern.compile("((?:\\w+\\s*)+):\\s(\\w+),\\s(\\w+),\\s(\\w+),\\s(\\w+)[?:\\n|\\r]");
+    private static Pattern DIMENSION_PATTERN;
     
     private LogicDimension[] dimensions;
     
@@ -37,8 +37,10 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     
     
     public DimensionDataInput(Tablero tablero)
-    {
+    {        
         super();
+            
+        DIMENSION_PATTERN = Pattern.compile(".*:.*,.*,.*");
         this.tablero = tablero;
         dimensions = new LogicDimension[Configuration.DIMENSION_AMOUNT];
         setLayout(new BorderLayout(10,20));
@@ -51,7 +53,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         buttonSiguiente.addActionListener(this);
         add(buttonSiguiente,BorderLayout.SOUTH);
         
-        textArea = new JTextArea("Names: Chester, Melvin, Nathan, Victor\nTimes: 900am, 1000am, 1100am, 12noon\nAilments: backpain, hippain, migraines, shingles");
+        textArea = new JTextArea("Names: Chester, Melvin, Nathan, Victor\nTimes: 9:00 am, 10:00 am, 11:00 am, 12 noon\nAilments: Back pain, Hip pain, Migraines, Shingles");
         textArea.setSize(100, 60);
         textArea.setMinimumSize(new Dimension(100,60));
         textArea.setLocation(10, 40 );
@@ -80,7 +82,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         int longestString = 0;
         while(matcher.find())
         {
-            String[] data = matcher.group().split(":");
+            String[] data = matcher.group().split(":",2);
             String[] currentDimensionItems = new String[Configuration.ITEMS_PER_DIMENSION];
             currentDimensionName = data[0];
             data = data[1].split(",");

@@ -2,16 +2,26 @@ package com.sample
  
 import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
 import co.uniandes.KM.logicPuzzles.mundo.*;
+import co.uniandes.KM.logicPuzzles.Configuration;
 import java.util.ArrayList;
 		
 rule "Positive elimination"
 	when
 		c : Cell( status == Cell.TRUE )
 		neighboringCells :  ArrayList()
-							from collect ( Cell ( x == c.x || y == c.y || z == c.z) )
+							from collect ( Cell ( status != Cell.IMPOSSIBLE && (x == c.x || y == c.y || z == c.z)) )
 	then
-		//TODO: Actualizar el estado de las celdas y alimentar los nuevos hechos a la sesión
-		System.out.println(neighboringCells);
+		//TODO: Actualizar el estado de las celdas en neighboringCells y alimentar los nuevos hechos a la sesión
+		
+end
+
+rule "Negative elimination"
+	when
+		c : Cell( status == Cell.POSSIBLE || status == Cell.UNKNOWN )
+		neighboringCells :  ArrayList( size  == ( Configuration.ITEMS_PER_DIMENSION - 1 ) * Configuration.DIMENSION_AMOUNT )
+							from collect ( Cell ( status == Cell.IMPOSSIBLE && (x == c.x || y == c.y || z == c.z)) )
+	then
+		//TODO: Actualizar el estado de la celda y alimentar el nuevo hecho a la sesión
 end
 
 rule "Hello World"

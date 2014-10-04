@@ -5,16 +5,22 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
 import co.uniandes.KM.logicPuzzles.Configuration;
 import co.uniandes.KM.logicPuzzles.mundo.LogicDimension;
@@ -38,22 +44,7 @@ public class Tablero extends JFrame implements ActionListener {
     public Tablero() {
         DimensionDataInput dDI = new DimensionDataInput(this);
         dDI.setVisible(true);
-    }
-
-    /**
-     * Initialize GridBag constraints, main layout manager, backend and main panels.
-     * @param dimensions Array of {@link LogicDimension} grabbed from user input
-     */
-    public void initialize(LogicDimension[] dimensions) {
         
-        if(dimensions==null)
-            System.exit(1);
-        
-        this.logicPuzzle = new LogicPuzzle(dimensions);
-
-        BorderLayout borderLayout = new BorderLayout();
-        setLayout(borderLayout);
-
         // 1x1
         singleCellConstraint = new GridBagConstraints();
         singleCellConstraint.gridheight = 1;
@@ -68,12 +59,41 @@ public class Tablero extends JFrame implements ActionListener {
         dimensionVerticalLabel = new GridBagConstraints();
         dimensionVerticalLabel.gridwidth = LABEL_TITLE_SIZE;
         dimensionVerticalLabel.gridheight = Configuration.ITEMS_PER_DIMENSION;
+    }
 
+    /**
+     * Initialize GridBag constraints, main layout manager, backend and main panels.
+     * @param dimensions Array of {@link LogicDimension} grabbed from user input
+     */
+    public void initialize(LogicDimension[] dimensions) {
+        setTitle("Logic Puzzle Engine");
+        if(dimensions==null)
+            System.exit(1);
+        
+        this.logicPuzzle = new LogicPuzzle(dimensions);
+
+        BorderLayout borderLayout = new BorderLayout();
+        setLayout(borderLayout);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        // Puzzle grid
         JPanel board = createBoard();
         board.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         add(board,BorderLayout.WEST);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         pack();
+        
+        // Control panel
+        
+        add(createControlPanel(), BorderLayout.CENTER);
+        pack();
+        
+        // Fact list
+        JPanel factList = createFactList();
+        factList.setPreferredSize(new Dimension((int)(screenSize.getWidth()-getWidth())/2, (int)(screenSize.getHeight()-getHeight())/2));
+        add(factList, BorderLayout.EAST);
+        pack();
+        
         setLocation((int)screenSize.getWidth()/2-getWidth()/2,(int)screenSize.getHeight()/2-getHeight()/2);
         setVisible(true);
         setResizable(true);
@@ -237,11 +257,63 @@ public class Tablero extends JFrame implements ActionListener {
         }
     }
 
+    
+    /**
+     * Creates a scrollable list, a text field and a button to allow input.
+     * @return {@link JPanel} A panel to insert the facts.
+     */
+    private JPanel createFactList() {
+        JPanel factList = new JPanel();
+        factList.setLayout(new BorderLayout());
+        
+        
+        String[] testData = new String[30];
+        for(int i = 0; i < 30; i++)
+        {
+            testData[ i ] = "I'm a placeholder rule. There are many like me but only i am number "+ (i+1);
+        }
+        JList<String> facts = new JList<String>(testData);
+        JScrollPane scroll = new JScrollPane(facts);
+
+        JPanel control = new JPanel();
+        control.setLayout(new BorderLayout());
+        control.add(new JTextArea(),BorderLayout.CENTER);   
+        control.add(new JButton("Insert"), BorderLayout.SOUTH);
+        
+        factList.add(scroll, BorderLayout.CENTER);
+        factList.add(control, BorderLayout.SOUTH);
+        
+        factList.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        
+        return factList;
+    }
+    
+    /**
+     * Creates a two-button control panel. One button for Step-by-step execution and one for non-stop execution
+     * @return {@link JPanel} A two-button panel
+     */
+    private JPanel createControlPanel(){
+        JPanel controlPanel = new JPanel();
+        GridLayout gridLayout = new GridLayout(2,1);
+        gridLayout.setVgap(80);
+        controlPanel.setLayout(gridLayout);
+        
+        JButton buttonStepByStep = new JButton(">");
+
+        
+        JButton buttonFullThrottleAhead = new JButton(">>");
+        
+        controlPanel.add(buttonStepByStep);
+        controlPanel.add(buttonFullThrottleAhead);
+        controlPanel.setBorder(new EmptyBorder(80, 10, 80, 10));
+        return controlPanel;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
     }
-
+    
     public LogicPuzzle getLogicPuzzle() {
         return logicPuzzle;
     }

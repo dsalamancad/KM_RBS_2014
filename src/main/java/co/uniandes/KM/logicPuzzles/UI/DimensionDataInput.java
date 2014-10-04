@@ -1,6 +1,7 @@
 package co.uniandes.KM.logicPuzzles.UI;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -56,11 +57,14 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         textArea = new JTextArea("Names: Chester, Melvin, Nathan, Victor\nTimes: 9:00 am, 10:00 am, 11:00 am, 12 noon\nAilments: Back pain, Hip pain, Migraines, Shingles");
         textArea.setSize(100, 60);
         textArea.setMinimumSize(new Dimension(100,60));
+        textArea.setPreferredSize(new Dimension(400,200));
         textArea.setLocation(10, 40 );
         textArea.addKeyListener(this);
         add(textArea,BorderLayout.CENTER);
         
-        setBounds(0, 0, 600, 200);
+        pack();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((int)screenSize.getWidth()/2-getWidth()/2,(int)screenSize.getHeight()/2-getHeight()/2);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
     

@@ -2,15 +2,19 @@ package co.uniandes.KM.logicPuzzles.UI;
 
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 import co.uniandes.KM.logicPuzzles.Configuration;
 import co.uniandes.KM.logicPuzzles.mundo.LogicDimension;
@@ -65,8 +69,12 @@ public class Tablero extends JFrame implements ActionListener {
         dimensionVerticalLabel.gridwidth = LABEL_TITLE_SIZE;
         dimensionVerticalLabel.gridheight = Configuration.ITEMS_PER_DIMENSION;
 
-        add(createBoard());
-        setBounds(10, 10, 960, 580);
+        JPanel board = createBoard();
+        board.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        add(board,BorderLayout.WEST);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        pack();
+        setLocation((int)screenSize.getWidth()/2-getWidth()/2,(int)screenSize.getHeight()/2-getHeight()/2);
         setVisible(true);
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

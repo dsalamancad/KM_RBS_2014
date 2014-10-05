@@ -13,6 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.apache.poi.util.StringUtil;
+import org.drools.core.util.StringUtils;
+
 import co.uniandes.KM.logicPuzzles.Configuration;
 import co.uniandes.KM.logicPuzzles.mundo.LogicDimension;
 
@@ -37,11 +40,11 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     private Tablero tablero;
     
     
+    @SuppressWarnings("restriction")
     public DimensionDataInput(Tablero tablero)
     {        
         super();
-            
-        DIMENSION_PATTERN = Pattern.compile(".*:.*,.*,.*");
+        DIMENSION_PATTERN = Pattern.compile(".*:.*" + StringUtils.repeat(",.*", Configuration.ITEMS_PER_DIMENSION - 1));
         this.tablero = tablero;
         dimensions = new LogicDimension[Configuration.DIMENSION_AMOUNT];
         setLayout(new BorderLayout(10,20));

@@ -137,6 +137,9 @@ public class Tablero extends JFrame implements ActionListener {
         for (int i = 0; i < yAxisDimensionIndexes.length; i++) {
             yAxisDimensionIndexes[i] = i + 1;
         }
+        
+        // Arcane formula
+        int totalSectionsToDraw = (int)(Configuration.DIMENSION_AMOUNT * Configuration.DIMENSION_AMOUNT - Configuration.DIMENSION_AMOUNT) / 2;
         // =================================================================================================
         // END: Initialization of drawing aids
         // =================================================================================================
@@ -144,7 +147,7 @@ public class Tablero extends JFrame implements ActionListener {
         // =================================================================================================
         // START: Drawing of the board
         // =================================================================================================
-        for (int i = 0; i < dimensions.length; i++) {
+        for (int i = 0; i < totalSectionsToDraw ; i++) {
             if ((currentColumn + 1) > horizontalThreshold) {
                 horizontalThreshold--;
                 currentRow++;

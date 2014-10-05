@@ -3,10 +3,6 @@
  */
 package co.uniandes.KM.logicPuzzles.mundo;
 
-import org.kie.api.event.rule.ObjectDeletedEvent;
-import org.kie.api.event.rule.ObjectInsertedEvent;
-import org.kie.api.event.rule.ObjectUpdatedEvent;
-import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieSession;
 
 import co.uniandes.KM.logicPuzzles.Configuration;
@@ -31,7 +27,8 @@ public class LogicPuzzle {
 		for (int i = 0; i < boardMatrix.length; i++) {
 			for (int j = 0; j < boardMatrix.length; j++) {
 				for (int k = 0; k < boardMatrix.length; k++) {
-					boardMatrix[i][j][k] = new Cell(Cell.UNKNOWN, i, j, k);
+					Integer[] coordinateArray = {i,j,k};
+					boardMatrix[i][j][k] = new Cell(Cell.UNKNOWN, coordinateArray);
 				}
 			}
 		}
@@ -78,9 +75,11 @@ public class LogicPuzzle {
 				}
 			}
 		}
-		session.insert(new Fact(-1,0,0));
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
+		Integer[] factCoordinates = {0,0,-1};
+		Fact fact = new Fact(factCoordinates);
+		session.insert(fact);
         session.insert(message);
         session.fireAllRules();
 	}

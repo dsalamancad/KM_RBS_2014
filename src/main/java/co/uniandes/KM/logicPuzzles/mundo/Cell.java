@@ -3,11 +3,14 @@
  */
 package co.uniandes.KM.logicPuzzles.mundo;
 
+import java.util.ArrayList;
+
+import co.uniandes.KM.logicPuzzles.Configuration;
+
 /**
  * @author danielsalamanca
- *
  */
-public class Cell {
+public class Cell implements CoordinatedObject{
 	
 	public final static String UNKNOWN = "?";
 	public final static String TRUE = "O";
@@ -16,16 +19,14 @@ public class Cell {
 	
 	private String status;
 	
-	private int x,y,z;
+	private Integer[] coordinates;
 
-	public Cell(String status, int x, int y, int z) {
+	public Cell(String status, Integer[] coordinates) {
 		super();
 		this.status = status;
 		if(status==null)
 			status = UNKNOWN;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.coordinates = coordinates;
 	}
 
 	/**
@@ -42,50 +43,51 @@ public class Cell {
 		this.status = status;
 	}
 
-	/**
-	 * @return the x
+	
+	/* (non-Javadoc)
+	 * @see co.uniandes.KM.logicPuzzles.mundo.CoordinatedObject#getCoordinates()
 	 */
-	public int getX() {
-		return x;
+	public Integer[] getCoordinates() {
+		return coordinates;
 	}
 
 	/**
-	 * @param x the x to set
+	 * @param coordinates
 	 */
-	public void setX(int x) {
-		this.x = x;
+	public void setCoordinates(Integer[] coordinates) {
+		this.coordinates = coordinates;
 	}
 
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
+	public int segregateCoordinates(CoordinatedObject obj) {
+	    boolean[] dimensionComparisson = compareArrays(this.coordinates, obj.getCoordinates());
+
+	    ArrayList<Integer> positiveCounter = new ArrayList<Integer>();
+	    for(int i = 0; i < Configuration.DIMENSION_AMOUNT; i++) {
+	        if(dimensionComparisson[i])
+	            positiveCounter.add(i);
+	    }
+	    
+	    return positiveCounter.size();
 	}
 
-	/**
-	 * @param y the y to set
-	 */
-	public void setY(int y) {
-		this.y = y;
+	public boolean[] compareArrays(Object[] array1, Object[] array2) {
+	    boolean[] result = new boolean[array1.length];
+	    for(int i = 0; i < result.length ; i++) {
+	        result[i] = array1[i].equals(array2[i]);
+	    }
+	    return result;
 	}
-
-	/**
-	 * @return the z
-	 */
-	public int getZ() {
-		return z;
-	}
-
-	/**
-	 * @param z the z to set
-	 */
-	public void setZ(int z) {
-		this.z = z;
+	
+	public String coordinatesToString() {
+		String result = "["+coordinates[0]+"";
+		for (int i = 1; i < coordinates.length; i++) {
+			result+=","+coordinates[i];
+		}
+		return result+"]";
 	}
 	
 	@Override
 	public String toString() {
-	    return "["+x+","+y+","+z+"]:"+status;
+	    return coordinates.toString()+":"+status;
 	}
 }

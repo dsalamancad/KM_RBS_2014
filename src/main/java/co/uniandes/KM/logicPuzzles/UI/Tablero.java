@@ -127,7 +127,6 @@ public class Tablero extends JFrame implements ActionListener {
             }
         }
 
-        // Ask me Sunday for this
         int[] xAxisDimensionIndexes = new int[Configuration.DIMENSION_AMOUNT - 1];
         xAxisDimensionIndexes[0] = 0; // First dimension goes first on X
         for (int i = 1; i < xAxisDimensionIndexes.length; i++) {
@@ -246,6 +245,7 @@ public class Tablero extends JFrame implements ActionListener {
      * @param yOffset Cell offset for the layout on the Y axis
      */
     private void drawCellGrid(JPanel board, int xOffset, int yOffset) {
+    	//TODO Link cells with backend
         for (int j = 0; j < Configuration.ITEMS_PER_DIMENSION; j++) {
             for (int k = 0; k < Configuration.ITEMS_PER_DIMENSION; k++) {
                 JLabel cellLabel = new JLabel("?");

@@ -1,61 +1,21 @@
 package co.uniandes.KM.logicPuzzles.mundo;
 
-public class Fact {
+public class Fact implements CoordinatedObject{
 
-	private int x,y,z;
+	private Integer[] coordinates;
 
-	/**
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public Fact(int x, int y, int z) {
+	public Fact(Integer[] coordinates) {
 		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.coordinates = coordinates;
 	}
 
-	/**
-	 * @return the x
-	 */
-	public int getX() {
-		return x;
+	public Integer[] getCoordinates() {
+		return coordinates;
 	}
 
-	/**
-	 * @param x the x to set
-	 */
-	public void setX(int x) {
-		this.x = x;
+	public void setCoordinates(Integer[] coordinates) {
+		this.coordinates = coordinates;
 	}
-
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return y;
-	}
-
-	/**
-	 * @param y the y to set
-	 */
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	/**
-	 * @return the z
-	 */
-	public int getZ() {
-		return z;
-	}
-
-	/**
-	 * @param z the z to set
-	 */
-	public void setZ(int z) {
-		this.z = z;
-	}
+	
 	
 }

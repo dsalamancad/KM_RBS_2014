@@ -9,6 +9,8 @@ import co.uniandes.KM.logicPuzzles.UI.Tablero;
 
 public class PuzzleEventListener implements RuleRuntimeEventListener {
 
+	private static int event_counter = 0;
+	
 	public Tablero tablero;
 
     /**
@@ -20,17 +22,14 @@ public class PuzzleEventListener implements RuleRuntimeEventListener {
 	}
 
 	public void objectInserted(ObjectInsertedEvent ev) {
-       System.out.println("Objeto insertado");
+       System.out.println(PuzzleEventListener.event_counter+"\tObjeto insertado");
+       event_counter++;
     }
 
     public void objectDeleted(ObjectDeletedEvent ev) {
     }
     
 	public void objectUpdated(ObjectUpdatedEvent ev) {
-        if (ev.getObject() instanceof Cell) {
-        	System.out.println("Objeto cambiado => Actualizar tablero");
-        	tablero.refresh();
-        }
     }
     
     /**

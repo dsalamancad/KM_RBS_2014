@@ -1,5 +1,5 @@
 package com.sample
- 
+
 import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
 import co.uniandes.KM.logicPuzzles.mundo.*;
 import co.uniandes.KM.logicPuzzles.Configuration;
@@ -9,7 +9,8 @@ rule "Positive elimination"
 	when
 		c : Cell( status == Cell.TRUE )
 		neighboringCells :  ArrayList()
-							from collect ( Cell ( status != Cell.IMPOSSIBLE && status != Cell.TRUE &&  ((x == c.x && y==c.y) ||(x == c.x && z==c.z) ||(y == c.y && z==c.z)) )  )
+							from collect ( Cell ( status != Cell.IMPOSSIBLE && status != Cell.TRUE && 
+							     segregateCoordinates( c ) >= (Configuration.DIMENSION_AMOUNT - 1)))
 		cell: Cell() from neighboringCells
 	then
 		System.out.println( "Positive elimination" );
@@ -23,94 +24,38 @@ rule "Negative elimination"
 	when
 		c : Cell( status == Cell.POSSIBLE || status == Cell.UNKNOWN )
 		neighboringCells :  ArrayList( size  == ( Configuration.ITEMS_PER_DIMENSION - 1 ) * Configuration.DIMENSION_AMOUNT )
-							from collect ( Cell ( status == Cell.IMPOSSIBLE && ((x == c.x && y==c.y) ||(x == c.x && z==c.z) ||(y == c.y && z==c.z)) ) )
+							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+							     segregateCoordinates( c ) >= (Configuration.DIMENSION_AMOUNT - 1)))
 	then
 		c.setStatus(Cell.TRUE);
 		update(c);
 		//TODO: Alimentar el nuevo hecho a la sesión
 end
 
-rule "Simple Fact Possible Cells X"
+rule "Simple Fact Possible Cells"
 	when
-		f : Fact( (x==-1 && y!=-1 && z!=-1))
+		f : Fact()
 		possibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN && (y == f.y && z==f.z)	)	)
+							from collect ( Cell ( status == Cell.UNKNOWN && 
+							     segregateCoordinates( f ) >= (Configuration.DIMENSION_AMOUNT - 1)))
 		pCell: Cell() from possibleCells
 		
 	then
-		System.out.println( "Possible:"+pCell.getX()+","+pCell.getY()+","+pCell.getZ());
+		System.out.println( "Possible:"+ pCell.coordinatesToString() );
 		pCell.setStatus(Cell.POSSIBLE);
 	 	update(pCell);
-	 	
-
 end
 
-rule "Simple Fact Impossible Cells X"
+rule "Simple Fact Impossible Cells"
 	when
-		f : Fact( (x==-1 && y!=-1 && z!=-1))
+		f : Fact( )
 		impossibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN &&  ((y == f.y && z!=f.z)||(z == f.z && y!=f.y)	)	)	)
+							from collect ( Cell ( status == Cell.UNKNOWN && 
+							     segregateCoordinates( f ) == 1 ))
 		impCell: Cell() from impossibleCells
 		
 	then
-		System.out.println( "Impossible:"+impCell.getX()+","+impCell.getY()+","+impCell.getZ());
-		impCell.setStatus(Cell.IMPOSSIBLE);
-	 	update(impCell);
-end
-
-
-rule "Simple Fact Possible Cells Y"
-	when
-		f : Fact( (y==-1 && x!=-1 && z!=-1))
-		possibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN && (x == f.x && z==f.z)	)	)
-		pCell: Cell() from possibleCells
-		
-	then
-		System.out.println( "Possible:"+pCell.getX()+","+pCell.getY()+","+pCell.getZ());
-		pCell.setStatus(Cell.POSSIBLE);
-	 	update(pCell);
-	 	
-
-end
-
-rule "Simple Fact Impossible Cells Y"
-	when
-		f : Fact( (y==-1 && x!=-1 && z!=-1))
-		impossibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN &&  ((x == f.x && z!=f.z)||(z == f.z && x!=f.x)	)	)	)
-		impCell: Cell() from impossibleCells
-		
-	then
-		System.out.println( "Impossible:"+impCell.getX()+","+impCell.getY()+","+impCell.getZ());
-		impCell.setStatus(Cell.IMPOSSIBLE);
-	 	update(impCell);
-end
-
-rule "Simple Fact Possible Cells Z"
-	when
-		f : Fact( (z==-1 && x!=-1 && y!=-1))
-		possibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN && (x == f.x && y==f.y)	)	)
-		pCell: Cell() from possibleCells
-		
-	then
-		System.out.println( "Possible:"+pCell.getX()+","+pCell.getY()+","+pCell.getZ());
-		pCell.setStatus(Cell.POSSIBLE);
-	 	update(pCell);
-	 	
-
-end
-
-rule "Simple Fact Impossible Cells Z"
-	when
-		f : Fact( (z==-1 && x!=-1 && y!=-1))
-		impossibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN &&  ((x == f.x && y!=f.y)||(y == f.y && x!=f.x)	)	)	)
-		impCell: Cell() from impossibleCells
-		
-	then
-		System.out.println( "Impossible:"+impCell.getX()+","+impCell.getY()+","+impCell.getZ());
+		System.out.println( "Impossible:"+impCell.coordinatesToString());
 		impCell.setStatus(Cell.IMPOSSIBLE);
 	 	update(impCell);
 end

@@ -325,4 +325,9 @@ public class Tablero extends JFrame implements ActionListener {
         this.logicPuzzle = logicPuzzle;
     }
 
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

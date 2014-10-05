@@ -3,6 +3,10 @@
  */
 package co.uniandes.KM.logicPuzzles.mundo;
 
+import org.kie.api.event.rule.ObjectDeletedEvent;
+import org.kie.api.event.rule.ObjectInsertedEvent;
+import org.kie.api.event.rule.ObjectUpdatedEvent;
+import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieSession;
 
 import co.uniandes.KM.logicPuzzles.Configuration;
@@ -74,11 +78,10 @@ public class LogicPuzzle {
 				}
 			}
 		}
+		session.insert(new Fact(-1,0,0));
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
         session.insert(message);
         session.fireAllRules();
 	}
-    
-    
 }

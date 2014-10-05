@@ -11,6 +11,7 @@ import org.kie.api.runtime.KieSession;
 
 import co.uniandes.KM.logicPuzzles.UI.Tablero;
 import co.uniandes.KM.logicPuzzles.mundo.LogicPuzzle;
+import co.uniandes.KM.logicPuzzles.mundo.PuzzleEventListener;
 
 /**
  * @author danielsalamanca
@@ -39,10 +40,11 @@ public class LogicPuzzlesMain {
 
         // Get backend
         this.logicPuzzle = tablero.getLogicPuzzle();
-
+        PuzzleEventListener eventListener = new PuzzleEventListener(tablero);
+        
         // Initialize drools
         try {
-            initializeDrools();
+            initializeDrools(eventListener);
         } catch (Throwable t) {
             t.printStackTrace();
             System.exit(0);
@@ -51,11 +53,12 @@ public class LogicPuzzlesMain {
         logicPuzzle.setSession(kSession);
     }
 
-    private void initializeDrools() throws Throwable {
+    private void initializeDrools(PuzzleEventListener eventListener) throws Throwable {
         // load up the knowledge base
         KieServices ks = KieServices.Factory.get();
         KieContainer kContainer = ks.getKieClasspathContainer();
         kSession = kContainer.newKieSession("ksession-rules");
+        kSession.addEventListener(eventListener);
     }
 
     /**

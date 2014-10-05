@@ -78,7 +78,7 @@ public class LogicPuzzle {
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
 		//Integer[] factCoordinates = {0,0,-1};
-		Integer[] factCoordinates = {0,0,-1};
+		Integer[] factCoordinates = {1,1,-1};
 		Fact fact = new Fact(factCoordinates);
 		session.insert(fact);
         session.insert(message);
@@ -100,7 +100,9 @@ public class LogicPuzzle {
 	public Object followCoordinateSet( Object currentSearchSpace ,  Integer[] coordinateSet) {
 		if(currentSearchSpace.getClass().isArray())
 		{
-			int currentCoordinate = coordinateSet[0] == -1?0:coordinateSet[0];
+			int currentCoordinate = coordinateSet[0] == -1?3:coordinateSet[0];
+			if (coordinateSet[0] == -1 && !((Object[]) currentSearchSpace)[currentCoordinate].getClass().isArray())
+				currentCoordinate = 0;
 			Integer[] newCoordinateSet = new Integer[coordinateSet.length-1];
 			System.arraycopy(coordinateSet, 1 , newCoordinateSet , 0 , newCoordinateSet.length);
 			return followCoordinateSet(((Object[]) currentSearchSpace)[currentCoordinate], newCoordinateSet);

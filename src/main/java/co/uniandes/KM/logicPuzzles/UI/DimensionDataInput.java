@@ -71,12 +71,10 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("SIGUIENTE"))
-        {
+        if(e.getActionCommand().equals("SIGUIENTE")) {
             tablero.initialize(dimensions);
             this.dispose();
         }
-
     }
 
     @Override

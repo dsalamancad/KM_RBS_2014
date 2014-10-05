@@ -22,7 +22,6 @@ public class PuzzleEventListener implements RuleRuntimeEventListener {
 	}
 
 	public void objectInserted(ObjectInsertedEvent ev) {
-       System.out.println(PuzzleEventListener.event_counter+"\tObjeto insertado");
        event_counter++;
     }
 
@@ -30,6 +29,8 @@ public class PuzzleEventListener implements RuleRuntimeEventListener {
     }
     
 	public void objectUpdated(ObjectUpdatedEvent ev) {
+		if(ev.getObject() instanceof Cell)
+			tablero.refresh();
     }
     
     /**

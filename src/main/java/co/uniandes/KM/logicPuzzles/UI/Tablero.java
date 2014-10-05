@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,17 +42,19 @@ public class Tablero extends JFrame implements ActionListener {
     private GridBagConstraints singleCellConstraint;
     private GridBagConstraints dimensionHorizontalLabel;
     private GridBagConstraints dimensionVerticalLabel;
+    
+    private ArrayList<JDimensionCellLabel> cells = new ArrayList<JDimensionCellLabel>();
 
     public Tablero() {
         DimensionDataInput dDI = new DimensionDataInput(this);
         dDI.setVisible(true);
-        
+                
         // 1x1
         singleCellConstraint = new GridBagConstraints();
         singleCellConstraint.gridheight = 1;
         singleCellConstraint.gridwidth = 1;
-        singleCellConstraint.ipadx = 15;
-        singleCellConstraint.ipady = 15;
+        singleCellConstraint.ipadx = 30;
+        singleCellConstraint.ipady = 30;
         // Configuration.ITEM_PER_DIMENSION_AMOUNT x LABEL_TITLE_SIZE
         dimensionHorizontalLabel = new GridBagConstraints();
         dimensionHorizontalLabel.gridwidth = Configuration.ITEMS_PER_DIMENSION;
@@ -164,7 +168,7 @@ public class Tablero extends JFrame implements ActionListener {
                 drawVerticalSectionLabels(board, currentDimensionY, xOffset, yOffset);
             }
             if (!haveIAlreadyDrawnThisParticularSide[currentColumn][currentRow]) {
-                drawCellGrid(board, xOffset, yOffset);
+                drawCellGrid(board, xOffset, yOffset, xAxisDimensionIndexes[currentColumn], yAxisDimensionIndexes[currentRow]);
                 haveIAlreadyDrawnThisParticularSide[currentColumn][currentRow] = true;
             }
             currentColumn++;
@@ -244,11 +248,15 @@ public class Tablero extends JFrame implements ActionListener {
      * @param xOffset Cell offset for the layout on the X axis
      * @param yOffset Cell offset for the layout on the Y axis
      */
-    private void drawCellGrid(JPanel board, int xOffset, int yOffset) {
+    private void drawCellGrid(JPanel board, int xOffset, int yOffset, int xDimensionIndex, int yDimensionIndex) {
     	//TODO Link cells with backend
         for (int j = 0; j < Configuration.ITEMS_PER_DIMENSION; j++) {
             for (int k = 0; k < Configuration.ITEMS_PER_DIMENSION; k++) {
-                JLabel cellLabel = new JLabel("?");
+            	Integer[] dimensionIndexes = {xDimensionIndex,yDimensionIndex};
+            	Integer[] coordinates = {j,k};
+            	String cellSummary = logicPuzzle.getSummary(dimensionIndexes, coordinates);
+            	JDimensionCellLabel cellLabel = new JDimensionCellLabel(cellSummary,dimensionIndexes,coordinates);
+            	cells.add(cellLabel);
                 cellLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 // The x position is 'j' plus the amount of items already drawn
                 // plus the space for both the dimension and items labels.
@@ -326,8 +334,13 @@ public class Tablero extends JFrame implements ActionListener {
     }
 
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
+		for (Iterator<JDimensionCellLabel> iterator = cells.iterator(); iterator.hasNext();) {
+			JDimensionCellLabel cellLabel = iterator.next();
+			String cellSummary = logicPuzzle.getSummary(cellLabel.getDimensionIndexes(), cellLabel.getCoordinates());
+			cellLabel.setText(cellSummary);
+		}
+		this.pack();
+		this.repaint();
 	}
 
 }

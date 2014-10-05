@@ -77,10 +77,38 @@ public class LogicPuzzle {
 		}
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
+		//Integer[] factCoordinates = {0,0,-1};
 		Integer[] factCoordinates = {0,0,-1};
 		Fact fact = new Fact(factCoordinates);
 		session.insert(fact);
         session.insert(message);
         session.fireAllRules();
 	}
+	
+	public String getSummary(Integer[] dimensionIndexes, Integer[] coordinates)
+	{
+		Integer[] coordinateSet = new Integer[Configuration.DIMENSION_AMOUNT];
+		for (int i = 0; i < Configuration.DIMENSION_AMOUNT; i++) {
+			coordinateSet[i] = -1;
+		}
+		for (int i = 0; i < dimensionIndexes.length; i++) {
+			coordinateSet[dimensionIndexes[i]] = coordinates[i];
+		}
+		return ((Cell) followCoordinateSet(boardMatrix, coordinateSet)).toString();
+	}
+	
+	public Object followCoordinateSet( Object currentSearchSpace ,  Integer[] coordinateSet) {
+		if(currentSearchSpace.getClass().isArray())
+		{
+			int currentCoordinate = coordinateSet[0] == -1?0:coordinateSet[0];
+			Integer[] newCoordinateSet = new Integer[coordinateSet.length-1];
+			System.arraycopy(coordinateSet, 1 , newCoordinateSet , 0 , newCoordinateSet.length);
+			return followCoordinateSet(((Object[]) currentSearchSpace)[currentCoordinate], newCoordinateSet);
+		}
+		else
+			return currentSearchSpace;
+	}
+	
+	
+	
 }

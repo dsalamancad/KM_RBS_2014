@@ -88,6 +88,6 @@ public class Cell implements CoordinatedObject{
 	
 	@Override
 	public String toString() {
-	    return coordinates.toString()+":"+status;
+	    return coordinatesToString()+":"+status;
 	}
 }

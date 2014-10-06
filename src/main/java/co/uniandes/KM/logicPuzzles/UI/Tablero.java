@@ -233,7 +233,8 @@ public class Tablero extends JFrame implements ActionListener {
 
         // Item title labels
         for (int j = 0; j < currentItems.length; j++) {
-            JLabel itemTitleLabel = new JLabel(currentItems[j]);
+        	int currentItemIndex = xOffset!=0?currentItems.length-1-j:j;
+            JLabel itemTitleLabel = new JLabel(currentItems[currentItemIndex]);
             itemTitleLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             singleCellConstraint.gridx = xOffset + LABEL_TITLE_SIZE;
             singleCellConstraint.gridy = yOffset + LABEL_TITLE_SIZE + j + 1;

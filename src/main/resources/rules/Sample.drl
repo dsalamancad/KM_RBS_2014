@@ -16,20 +16,18 @@ rule "Positive elimination"
 		System.out.println( "Positive elimination" );
 	 	cell.setStatus(Cell.IMPOSSIBLE);
 	 	update(cell);
-		//TODO: Alimentar los nuevos hechos a la sesión
-		
 end
 
 rule "Negative elimination"
 	when
 		c : Cell( status == Cell.POSSIBLE || status == Cell.UNKNOWN )
-		neighboringCells :  ArrayList( size  == ( Configuration.ITEMS_PER_DIMENSION - 1 ) * Configuration.DIMENSION_AMOUNT )
+		neighboringCells :  ArrayList( size  == ( Configuration.ITEMS_PER_DIMENSION - 1 ) * (Configuration.DIMENSION_AMOUNT-1) )
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 							     segregateCoordinates( c ) >= (Configuration.DIMENSION_AMOUNT - 1)))
 	then
 		c.setStatus(Cell.TRUE);
+		System.out.println( "Negative elimination:"+ c.coordinatesToString() );
 		update(c);
-		//TODO: Alimentar el nuevo hecho a la sesión
 end
 
 rule "Simple Fact Possible Cells"
@@ -50,7 +48,7 @@ rule "Simple Fact Impossible Cells"
 	when
 		f : Fact( )
 		impossibleCells :  ArrayList()
-							from collect ( Cell ( status == Cell.UNKNOWN && 
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
 							     segregateCoordinates( f ) == 1 ))
 		impCell: Cell() from impossibleCells
 		
@@ -58,6 +56,32 @@ rule "Simple Fact Impossible Cells"
 		System.out.println( "Impossible:"+impCell.coordinatesToString());
 		impCell.setStatus(Cell.IMPOSSIBLE);
 	 	update(impCell);
+end
+
+rule "Complex Fact OR rule"
+	when
+		cf : ComplexFact(operator==Operator.OR)
+		possibleCellsF1 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+							     segregateCoordinates( cf.fact1 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
+	then
+	System.out.println( "Complex Rule");
+	System.out.println( "Fact:"+ cf.getFact2().coordinatesToString());
+		insert( (Fact)cf.getFact2() );
+
+end
+
+rule "Complex Fact2 OR rule"
+	when
+		cf : ComplexFact(operator==Operator.OR)
+		possibleCellsF1 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+							     segregateCoordinates( cf.fact2 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
+	then
+	System.out.println( "Complex Rule");
+	System.out.println( "Fact:"+ cf.getFact1().coordinatesToString());
+		insert( (Fact)cf.getFact1() );
+
 end
 
 rule "Hello World"

@@ -17,5 +17,11 @@ public class Fact implements CoordinatedObject{
 		this.coordinates = coordinates;
 	}
 	
-	
+	public String coordinatesToString() {
+		String result = "["+coordinates[0]+"";
+		for (int i = 1; i < coordinates.length; i++) {
+			result+=","+coordinates[i];
+		}
+		return result+"]";
+	}
 }

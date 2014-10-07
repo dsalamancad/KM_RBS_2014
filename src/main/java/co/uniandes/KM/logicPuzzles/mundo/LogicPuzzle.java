@@ -77,10 +77,16 @@ public class LogicPuzzle {
 		}
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
-		//Integer[] factCoordinates = {0,0,-1};
-		Integer[] factCoordinates = {1,1,-1};
+		Integer[] factCoordinates = {0,0,-1};
+		//Integer[] factCoordinates = {1,1,-1};
 		Fact fact = new Fact(factCoordinates);
 		session.insert(fact);
+		Integer[] coorF1 = {0,1,-1}; //Falsa
+		Integer[] coorF2 = {0,-1,0}; //Verdadera
+		Fact fact1 = new Fact(coorF1);
+		Fact fact2 = new Fact(coorF2);
+		ComplexFact cf = new ComplexFact(fact1, fact2, Operator.OR);
+		session.insert(cf);
         session.insert(message);
         session.fireAllRules();
 	}

@@ -129,7 +129,7 @@ rule "Complex Fact Less rule F1-Max"
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
 		impossibleCellsF1 :  (ArrayList()
 							from collect ( Cell ((status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
-							     segregateCoordinates( cf.fact1 ) >= 1 && coordinates[1]==( Configuration.ITEMS_PER_DIMENSION-1))) )
+							     segregateCoordinates( cf.fact1 ) >= 1 && coordinates[Configuration.NUMERIC_DIMENSION]==( Configuration.ITEMS_PER_DIMENSION-1))) )
 		cellF1: Cell() from impossibleCellsF1
 	then
 		System.out.println("Complex Fact Less rule F1-Max");
@@ -147,7 +147,7 @@ rule "Complex Fact Less rule F2-Min"
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
 		impossibleCellsF2 :  (ArrayList()
 							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
-							     segregateCoordinates( cf.fact2 ) >= 1 && coordinates[1]==(0))) )
+							     segregateCoordinates( cf.fact2 ) >= 1 && coordinates[Configuration.NUMERIC_DIMENSION]==(0))) )
 		cellF2: Cell() from impossibleCellsF2
 	then
 		System.out.println("Complex Fact Less rule F2-Min");
@@ -185,15 +185,15 @@ rule "Complex Fact Less Than Next Max"
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
 		
 		cellF2: ( Cell ( status == Cell.IMPOSSIBLE && 
-							     segregateCoordinates( cf.fact2 ) == 1 && coordinates[1]>0 ) )
+							     segregateCoordinates( cf.fact2 ) == 1 && coordinates[Configuration.NUMERIC_DIMENSION]>0 ) )
 							     
 		impossibleCellsF2 :  (ArrayList(size==Configuration.ITEMS_PER_DIMENSION)
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
-							segregateCoordinates( cf.fact2 ) == 1 &&  coordinates[1]==cellF2.coordinates[1] ) ) )	
+							segregateCoordinates( cf.fact2 ) == 1 &&  coordinates[Configuration.NUMERIC_DIMENSION]==cellF2.coordinates[Configuration.NUMERIC_DIMENSION] ) ) )	
 		
 		cellF1Del: Cell((status == Cell.UNKNOWN || status == Cell.POSSIBLE) 
 						&& segregateCoordinates( cf.fact1 ) == 1 
-						&& coordinates[1]==(cellF2.coordinates[1]-1) 
+						&& coordinates[Configuration.NUMERIC_DIMENSION]==(cellF2.coordinates[Configuration.NUMERIC_DIMENSION]-1) 
 						&& segregateCoordinates( cellF2 ) == 1)
 
 	then
@@ -214,13 +214,13 @@ rule "Complex Fact Less Than Next Min"
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
 					
 		cellF1: Cell ( status == Cell.IMPOSSIBLE && 
-					segregateCoordinates( cf.fact1 ) == 1 && coordinates[1]<( Configuration.ITEMS_PER_DIMENSION-1))
+					segregateCoordinates( cf.fact1 ) == 1 && coordinates[Configuration.NUMERIC_DIMENSION]<( Configuration.ITEMS_PER_DIMENSION-1))
 		impossibleCellsF1 :  (ArrayList(size==Configuration.ITEMS_PER_DIMENSION)
 							from collect ( Cell ( status == Cell.IMPOSSIBLE  && 
-							segregateCoordinates( cf.fact1 ) == 1 && coordinates[1]==cellF1.coordinates[1] ) ) )	
+							segregateCoordinates( cf.fact1 ) == 1 && coordinates[Configuration.NUMERIC_DIMENSION]==cellF1.coordinates[Configuration.NUMERIC_DIMENSION] ) ) )	
 		cellF2Del:  Cell((status == Cell.UNKNOWN || status == Cell.POSSIBLE)
 					 && segregateCoordinates( cf.fact2 ) == 1 
-					 && coordinates[1]==(cellF1.coordinates[1]+1) )
+					 && coordinates[Configuration.NUMERIC_DIMENSION]==(cellF1.coordinates[Configuration.NUMERIC_DIMENSION]+1) )
 
 	then
 		System.out.println("Complex Fact Less Than Next Min");

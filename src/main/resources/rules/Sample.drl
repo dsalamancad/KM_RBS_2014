@@ -4,20 +4,21 @@ import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
 import co.uniandes.KM.logicPuzzles.mundo.*;
 import co.uniandes.KM.logicPuzzles.Configuration;
 import java.util.ArrayList;
-		
+
+	
 rule "Positive elimination"
 	when
 		c : Cell( status == Cell.TRUE )
 		neighboringCells :  ArrayList()
 							from collect ( Cell ( status != Cell.IMPOSSIBLE && status != Cell.TRUE && 
-							     segregateCoordinates( c ) >= (Configuration.DIMENSION_AMOUNT - 1)))
+							     segregateCoordinates( c ) >= 1))
 		cell: Cell() from neighboringCells
 	then
 		System.out.println( "Positive elimination" );
 	 	cell.setStatus(Cell.IMPOSSIBLE);
 	 	update(cell);
 end
-
+/*	
 rule "Negative elimination"
 	when
 		c : Cell( status == Cell.POSSIBLE || status == Cell.UNKNOWN )
@@ -28,7 +29,7 @@ rule "Negative elimination"
 		c.setStatus(Cell.TRUE);
 		System.out.println( "Negative elimination:"+ c.coordinatesToString() );
 		update(c);
-end
+end*/
 
 rule "Simple Fact Possible Cells"
 	when
@@ -59,29 +60,350 @@ rule "Simple Fact Impossible Cells"
 end
 
 rule "Complex Fact OR rule"
+//Si la segunda parte del or es imposible, la primera es un fact.
 	when
 		cf : ComplexFact(operator==Operator.OR)
 		possibleCellsF1 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 							     segregateCoordinates( cf.fact1 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
 	then
-	System.out.println( "Complex Rule");
-	System.out.println( "Fact:"+ cf.getFact2().coordinatesToString());
+		System.out.println( "Complex Rule OR");
+		System.out.println( "Fact:"+ cf.getFact2().coordinatesToString());
 		insert( (Fact)cf.getFact2() );
 
 end
 
 rule "Complex Fact2 OR rule"
+//Si la primera parte del or es posible, la segunda es un fact.
 	when
 		cf : ComplexFact(operator==Operator.OR)
 		possibleCellsF1 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 							     segregateCoordinates( cf.fact2 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
 	then
-	System.out.println( "Complex Rule");
-	System.out.println( "Fact:"+ cf.getFact1().coordinatesToString());
+		System.out.println( "Complex Rule2 Or rule");
+		System.out.println( "Fact:"+ cf.getFact1().coordinatesToString());
 		insert( (Fact)cf.getFact1() );
 
+end
+
+rule "Complex Fact OR Same Dimension"
+//Si el or es sobre hechos de una misma dimensión ej: el número de salón del Prof.1 es 12 o el el número de salón del Prof.1 es 13.
+	when
+		cf : ComplexFact(operator==Operator.OR && cf.fact1.segregateCoordinates(cf.fact2)==2)
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
+							     segregateCoordinates( cf.fact1)==1 && segregateCoordinates( cf.fact2)==1 )) )
+	     cImp: Cell() from impossibleCellsF1
+	then
+		System.out.println( "Complex Rule OR Same dimension");
+		System.out.println( "F1 Impossible:"+ cImp.coordinatesToString());
+		cImp.setStatus(Cell.IMPOSSIBLE);
+		update(cImp);
+
+end
+
+rule "Complex Fact OR Diff Dimension"
+//Si el or es sobre hechos de dimensiones diferentes ej: el número de salón del Prof.1 es 12 o la cátedra del Prof.1 es Biología.
+// Estos dos hechos no pueden ocurri al mismo tiempo. 
+	when
+		cf : ComplexFact(operator==Operator.OR && cf.fact1.segregateCoordinates(cf.fact2)==1)
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
+							     (	(segregateCoordinates( cf.fact1)==1 && segregateCoordinates( cf.fact2)==1 
+							     && coordinates[(cf.fact1.commonCoordinates(cf.fact2)).get(0)]!=cf.fact1.coordinates[(cf.fact1.commonCoordinates(cf.fact2)).get(0)])
+							    ||(segregateCoordinates( cf.fact1)==2 && segregateCoordinates( cf.fact2)==2 ) ) ) ) )
+	     cImp: Cell() from impossibleCellsF1
+	then
+		System.out.println( "Complex Rule OR Same dimension");
+		System.out.println( "F1 Impossible:"+ cImp.coordinatesToString());
+		cImp.setStatus(Cell.IMPOSSIBLE);
+		update(cImp);
+
+end
+
+rule "Complex Fact Less rule F1-Max"
+//Si fact1 es menor que fact2, fact1 no puede ser el máximo
+	when
+		cf : ComplexFact(operator==Operator.LESS 
+					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ((status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
+							     segregateCoordinates( cf.fact1 ) >= 1 && coordinates[1]==( Configuration.ITEMS_PER_DIMENSION-1))) )
+		cellF1: Cell() from impossibleCellsF1
+	then
+		System.out.println("Complex Fact Less rule F1-Max");
+		System.out.println( "F1 Impossible:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+
+		
+end
+
+rule "Complex Fact Less rule F2-Min"
+//Si fact1 es menor que fact2, fact2 no puede ser el mínimo
+	when
+		cf : ComplexFact(operator==Operator.LESS 
+					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
+		impossibleCellsF2 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
+							     segregateCoordinates( cf.fact2 ) >= 1 && coordinates[1]==(0))) )
+		cellF2: Cell() from impossibleCellsF2
+	then
+		System.out.println("Complex Fact Less rule F2-Min");
+		System.out.println( "F2 Impossible:"+ cellF2.coordinatesToString());
+		cellF2.setStatus(Cell.IMPOSSIBLE);
+		update(cellF2);
+		
+end
+
+rule "Complex Fact Less rule different dimensions"
+//Si tengo un hecho complejo que compara con less a dimensiones diferentes. Estas dimensiones no pueden ser iguales.
+	when
+		cf : ComplexFact(operator==Operator.LESS 
+					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() 
+					&& cf.fact1.segregateCoordinates(cf.fact2)==1 )
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) && 
+							     segregateCoordinates( cf.fact1 ) == 1 && segregateCoordinates( cf.fact2 ) == 1 ) )	)
+		cellF1: Cell() from impossibleCellsF1
+
+	then
+		System.out.println("Complex Fact Less rule different dimension");
+		System.out.println( "F1 Impossible:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+
+		
+end
+
+rule "Complex Fact Less Than Next Max"
+//Si tengo un hecho complejo que compara con less.
+//El menor elemento no puede ser igual al mayor valor posible del mayor elemento.
+	when
+		cf : ComplexFact(operator==Operator.LESS 
+					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
+		
+		cellF2: ( Cell ( status == Cell.IMPOSSIBLE && 
+							     segregateCoordinates( cf.fact2 ) == 1 && coordinates[1]>0 ) )
+							     
+		impossibleCellsF2 :  (ArrayList(size==Configuration.ITEMS_PER_DIMENSION)
+							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+							segregateCoordinates( cf.fact2 ) == 1 &&  coordinates[1]==cellF2.coordinates[1] ) ) )	
+		
+		cellF1Del: Cell((status == Cell.UNKNOWN || status == Cell.POSSIBLE) 
+						&& segregateCoordinates( cf.fact1 ) == 1 
+						&& coordinates[1]==(cellF2.coordinates[1]-1) 
+						&& segregateCoordinates( cellF2 ) == 1)
+
+	then
+		System.out.println("Complex Fact Less Than Next Max");
+		System.out.println( "Fact1:"+ cf.getFact1().coordinatesToString());
+		System.out.println( "Fact2:"+ cf.getFact2().coordinatesToString());
+		System.out.println( "F2:"+ cellF2.coordinatesToString());
+		System.out.println( "F1 Impossible:"+ cellF1Del.coordinatesToString());
+		cellF1Del.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1Del);
+end
+
+rule "Complex Fact Less Than Next Min"
+//Si tengo un hecho complejo que compara con less.
+//El mayor elemento no puede ser igual al menor valor posible del menor elemento.
+	when
+		cf : ComplexFact(operator==Operator.LESS 
+					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
+					
+		cellF1: Cell ( status == Cell.IMPOSSIBLE && 
+					segregateCoordinates( cf.fact1 ) == 1 && coordinates[1]<( Configuration.ITEMS_PER_DIMENSION-1))
+		impossibleCellsF1 :  (ArrayList(size==Configuration.ITEMS_PER_DIMENSION)
+							from collect ( Cell ( status == Cell.IMPOSSIBLE  && 
+							segregateCoordinates( cf.fact1 ) == 1 && coordinates[1]==cellF1.coordinates[1] ) ) )	
+		cellF2Del:  Cell((status == Cell.UNKNOWN || status == Cell.POSSIBLE)
+					 && segregateCoordinates( cf.fact2 ) == 1 
+					 && coordinates[1]==(cellF1.coordinates[1]+1) )
+
+	then
+		System.out.println("Complex Fact Less Than Next Min");
+		System.out.println( "Fact1:"+ cf.getFact1().coordinatesToString());
+		System.out.println( "Fact2:"+ cf.getFact2().coordinatesToString());
+		System.out.println( "F:"+ cellF1.coordinatesToString());
+		System.out.println( "F1 Impossible:"+ cellF2Del.coordinatesToString());
+		cellF2Del.setStatus(Cell.IMPOSSIBLE);
+		update(cellF2Del);
+end
+
+rule "XOR Fact Same Dimensions Rule 1"
+//Los dos primeros hechos son de la misma dimensión
+// Se descarta la posibilidad de que los dos segundos hechos sean iguales.
+	when
+		xf : XORFact(xf.fact1.segregateCoordinates(xf.fact2)==(Configuration.DIMENSION_AMOUNT - 1))
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE)  && 
+							segregateCoordinates( xf.fact3 ) == 1 && segregateCoordinates( xf.fact4 ) == 1 ) ) )	
+					
+		cellF1: Cell() from impossibleCellsF1
+	then
+		System.out.println("Xor Fact Same dimension");
+		System.out.println( "F:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+end
+
+rule "XOR Fact Same Dimensions Rule 1.2"
+//Los dos segundos hechos son de la misma dimensión
+// Se descarta la posibilidad de que los dos primeros hechos sean iguales.
+	when
+		xf : XORFact(xf.fact3.segregateCoordinates(xf.fact4)==(Configuration.DIMENSION_AMOUNT - 1))
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE)  && 
+							segregateCoordinates( xf.fact1 ) == 1 && segregateCoordinates( xf.fact2 ) == 1 ) ) )	
+					
+		cellF1: Cell() from impossibleCellsF1
+	then
+		System.out.println("Xor Fact Same dimension 1.2");
+		System.out.println( "F:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+end
+
+rule "XOR Fact Same Dimensions Rule 2.1"
+//Los dos primeros hechos son de la misma dimensión.
+//Descartar esto para los dos segundos hechos.
+	when
+		xf : XORFact(xf.fact1.segregateCoordinates(xf.fact2)==(Configuration.DIMENSION_AMOUNT - 1))
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE)  && 
+							(segregateCoordinates( xf.fact3 ) == 1 || segregateCoordinates( xf.fact4 ) == 1) && 
+							(segregateCoordinates( xf.fact1 ) == 0 && segregateCoordinates( xf.fact2 ) == 0)) ) )	
+					
+		cellF1: Cell() from impossibleCellsF1
+	then
+		System.out.println("Xor Fact Same dimension Rule 2.1");
+		System.out.println( "F:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+end
+
+rule "XOR Fact Same Dimensions Rule 2.2"
+//Los dos segundos hechos son de la misma dimensión.
+//Descartar esto para los dos primeros hechos.
+	when
+		xf : XORFact(xf.fact3.segregateCoordinates(xf.fact4)==(Configuration.DIMENSION_AMOUNT - 1))
+		impossibleCellsF1 :  (ArrayList()
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE)  && 
+							(segregateCoordinates( xf.fact1 ) == 1 || segregateCoordinates( xf.fact2 ) == 1) && 
+							(segregateCoordinates( xf.fact3 ) == 0 && segregateCoordinates( xf.fact4 ) == 0)) ) )	
+					
+		cellF1: Cell() from impossibleCellsF1
+	then
+		System.out.println("Xor Fact Same dimension Rule 2.2");
+		System.out.println( "F:"+ cellF1.coordinatesToString());
+		cellF1.setStatus(Cell.IMPOSSIBLE);
+		update(cellF1);
+end
+
+rule "XOR Fact Rule 3.1"
+//El xor indica que se cumple (f1f3 && f2f4) || (f1f4 && f2f3). 
+//Si se sabe que alguna no es cierta f1f3 o f2f4, es posible concluir que los otros son hechos f1f4,f2f3
+	when
+		xf : XORFact()
+		possibleCellsF1F3 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+					     segregateCoordinates( xf.fact1 ) ==1 && segregateCoordinates( xf.fact3 ) ==1 )) )
+	then
+		System.out.println("Xor false facts f1 y f3");		
+		insert( xf.getFact1().combineFacts(xf.getFact4()) );
+		insert( xf.getFact2().combineFacts(xf.getFact3()) );
+end
+
+rule "XOR Fact Rule 3.2"
+//El xor indica que se cumple (f1f3 && f2f4) || (f1f4 && f2f3). 
+//Si se sabe que alguna no es cierta f1f3 o f2f4, es posible concluir que los otros son hechos f1f4,f2f3
+	when
+		xf : XORFact()
+		possibleCellsF1F3 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+					     segregateCoordinates( xf.fact2 ) ==1 && segregateCoordinates( xf.fact4 ) ==1 )) )
+	then
+	System.out.println("Xor false facts f2 y f4");			
+		insert( xf.getFact1().combineFacts(xf.getFact4()) );
+		insert( xf.getFact2().combineFacts(xf.getFact3()) );
+end
+
+rule "XOR Fact Rule 3.3"
+//El xor indica que se cumple (f1f3 && f2f4) || (f1f4 && f2f3). 
+//Si se sabe que alguna no es cierta f1f3 o f2f4, es posible concluir que los otros son hechos f1f4,f2f3
+	when
+		xf : XORFact()
+		possibleCellsF1F3 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+					     segregateCoordinates( xf.fact1 ) ==1 && segregateCoordinates( xf.fact4 ) ==1 )) )
+	then
+	System.out.println("Xor false facts f1 y f4");			
+		insert( xf.getFact1().combineFacts(xf.getFact3()) );
+		insert( xf.getFact2().combineFacts(xf.getFact4()) );
+end
+
+rule "XOR Fact Rule 3.4"
+//El xor indica que se cumple (f1f3 && f2f4) || (f1f4 && f2f3). 
+//Si se sabe que alguna no es cierta f1f3 o f2f4, es posible concluir que los otros son hechos f1f4,f2f3
+	when
+		xf : XORFact()
+		possibleCellsF1F3 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
+					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
+					     segregateCoordinates( xf.fact2 ) ==1 && segregateCoordinates( xf.fact3 ) ==1 )) )
+	then	
+	System.out.println("Xor false facts f3 y f4");		
+		insert( xf.getFact1().combineFacts(xf.getFact3()) );
+		insert( xf.getFact2().combineFacts(xf.getFact4()) );
+end
+
+rule "Negative elimination 1"
+	when
+		c: Cell(status == Cell.UNKNOWN || status == Cell.POSSIBLE)
+		impossibleCellsF1 :  (ArrayList(size==1)
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) &&
+							c.coordinates[0]==coordinates[0])	)	)
+		impossibleCellsF2 :  (ArrayList(size==0)
+							from collect ( Cell ( (status == Cell.TRUE) &&
+							c.coordinates[0]==coordinates[0])	)	)
+	then
+		c.setStatus(Cell.TRUE);
+		System.out.println("True value");
+		System.out.println( "C:"+ c.coordinatesToString());
+		update(c);
+end
+
+rule "Negative elimination 2"
+	when
+		c: Cell(status == Cell.UNKNOWN || status == Cell.POSSIBLE)
+		impossibleCellsF1 :  (ArrayList(size==1)
+							from collect ( Cell ( (status == Cell.UNKNOWN || status == Cell.POSSIBLE) &&
+							c.coordinates[1]==coordinates[1])	)	)
+		impossibleCellsF2 :  (ArrayList(size==0)
+							from collect ( Cell ( (status == TRUE) &&
+							c.coordinates[1]==coordinates[1])	)	)
+	then
+		c.setStatus(Cell.TRUE);
+		System.out.println("True value");
+		System.out.println( "C:"+ c.coordinatesToString());
+		update(c);
+end
+
+rule "Negative elimination 3"
+	when
+		c: Cell(status == Cell.UNKNOWN || status == Cell.POSSIBLE)
+		impossibleCellsF1 :  (ArrayList(size==1)
+							from collect ( Cell ((status == Cell.UNKNOWN || status == Cell.POSSIBLE) &&
+							c.coordinates[2]==coordinates[2])	)	)
+		impossibleCellsF2 :  (ArrayList(size==0)
+							from collect ( Cell ((status == Cell.TRUE) &&
+							c.coordinates[2]==coordinates[2])	)	)
+	then
+		c.setStatus(Cell.TRUE);
+		System.out.println("True value");
+		System.out.println( "C:"+ c.coordinatesToString());
+		update(c);
 end
 
 rule "Hello World"

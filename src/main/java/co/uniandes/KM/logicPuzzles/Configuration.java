@@ -16,7 +16,10 @@ public abstract class Configuration {
     
     
     /**
-     * Ítems por dimensiones
+     * Ã�tems por dimensiones
      */
     public static int ITEMS_PER_DIMENSION;
+    
+
+    public static int NUMERIC_DIMENSION;
 }

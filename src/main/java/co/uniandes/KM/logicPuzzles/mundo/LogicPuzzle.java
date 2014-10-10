@@ -77,18 +77,67 @@ public class LogicPuzzle {
 		}
 		Message message = new Message();
 		message.setMessage("ZOMGWTFBBQ!!!1!oneone");
-		Integer[] factCoordinates = {0,0,-1};
-		//Integer[] factCoordinates = {1,1,-1};
-		Fact fact = new Fact(factCoordinates);
-		session.insert(fact);
-		Integer[] coorF1 = {0,1,-1}; //Falsa
-		Integer[] coorF2 = {0,-1,0}; //Verdadera
+
+		
+		Integer[] coorF1 = {3,-1,-1}; //Falsa
+		Integer[] coorF2 = {-1,-1,0}; //Verdadera
 		Fact fact1 = new Fact(coorF1);
 		Fact fact2 = new Fact(coorF2);
-		ComplexFact cf = new ComplexFact(fact1, fact2, Operator.OR);
-		session.insert(cf);
+		ComplexFact cf1= new ComplexFact(fact1, fact2, Operator.LESS);
+		
+
+		Integer[] coorF3 = {-1,-1,2}; //Verdadera
+		Integer[] coorF4 = {-1,-1,0}; //Falsa
+		Fact fact3 = new Fact(coorF3);
+		Fact fact4 = new Fact(coorF4);
+		
+		ComplexFact cf2= new ComplexFact(fact3, fact4, Operator.LESS);
+		
+		Integer[] coorF11 = {0,-1,-1}; //Verdadera
+		Integer[] coorF12 = {1,-1,-1}; //Falsa
+		Fact fact11 = new Fact(coorF11);
+		Fact fact12 = new Fact(coorF12);
+		
+		ComplexFact cf3= new ComplexFact(fact11, fact12, Operator.LESS);
+		
+		Integer[] coorF9 = {2,1,-1}; //Verdadera
+		Integer[] coorF10 = {-1,1,2}; //Falsa
+		Fact fact9 = new Fact(coorF9);
+		Fact fact10 = new Fact(coorF10);
+		
+		ComplexFact cf4= new ComplexFact(fact9, fact10, Operator.OR);
+		
+		
+		Integer[] coorF5 = {-1,0,-1}; //Verdadera
+		Integer[] coorF6 = {-1,3,-1}; //Falsa
+		Integer[] coorF7 = {-1,-1,3}; //Verdadera
+		Integer[] coorF8 = {2,-1,-1}; //Verdadera
+		Fact fact5 = new Fact(coorF5);
+		Fact fact6 = new Fact(coorF6);
+		Fact fact7 = new Fact(coorF7);
+		Fact fact8 = new Fact(coorF8);
+		XORFact xf= new XORFact(fact5, fact6, fact7, fact8);
+		
+		session.insert(cf4);
+		session.insert(cf1);
+		session.insert(cf3);
+		session.insert(cf2);
+		
+		
+		session.insert(xf);
+		
+		
         session.insert(message);
         session.fireAllRules();
+        
+        for (int i = 0; i < boardMatrix.length; i++) {
+			for (int j = 0; j < boardMatrix.length; j++) {
+				for (int k = 0; k < boardMatrix.length; k++) {
+					
+					System.out.println(boardMatrix[i][j][k].coordinatesToString()+":"+boardMatrix[i][j][k].getStatus()); 
+				}
+			}
+		}
 	}
 	
 	public String getSummary(Integer[] dimensionIndexes, Integer[] coordinates)

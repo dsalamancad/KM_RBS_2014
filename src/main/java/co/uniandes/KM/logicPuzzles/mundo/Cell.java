@@ -69,6 +69,41 @@ public class Cell implements CoordinatedObject{
 	    
 	    return positiveCounter.size();
 	}
+	
+	public int shareOneDimension(CoordinatedObject obj) {
+	    boolean[] dimensionComparisson = compareArrays(this.coordinates, obj.getCoordinates());
+
+	    int n=-1;
+	    for(int i = 0; i < Configuration.DIMENSION_AMOUNT; i++) {
+    		if(dimensionComparisson[i]){
+    			if(n==-1){
+    				n=i;
+    			}else{
+    				n=-2;
+    			}
+    			
+    		}
+	    	
+	    }
+	    
+	    return (n==-2?-1:n);
+	}
+	
+	public Integer getDimensionValue(int dimension){
+		return coordinates[dimension];
+	}
+	
+	public ArrayList<Integer> commonCoordinates(CoordinatedObject obj) {
+	    boolean[] dimensionComparisson = compareArrays(this.coordinates, obj.getCoordinates());
+
+	    ArrayList<Integer> positiveCounter = new ArrayList<Integer>();
+	    for(int i = 0; i < Configuration.DIMENSION_AMOUNT; i++) {
+	        if(dimensionComparisson[i])
+	            positiveCounter.add(i);
+	    }
+	    
+	    return positiveCounter;
+	}
 
 	public boolean[] compareArrays(Object[] array1, Object[] array2) {
 	    boolean[] result = new boolean[array1.length];

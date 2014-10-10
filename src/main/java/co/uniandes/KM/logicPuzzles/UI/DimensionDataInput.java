@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import javax.swing.JComboBox;
 
 import org.drools.core.util.StringUtils;
 
@@ -27,9 +29,11 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
      */
     private static final long serialVersionUID = 3993697247458834659L;
     
+    private String[] dims={"Dimension 1", "Dimension 2", "Dimension 3"};
     private JButton buttonSiguiente;
     private JTextArea textArea;
-    
+    private JComboBox<String> combo;
+    private JLabel dim;
     /**
      * 
      */
@@ -37,10 +41,14 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     
     private LogicDimension[] dimensions;
     
+    private int dimNumerica;
+    
     private Tablero tablero;
     
     public DimensionDataInput(Tablero tablero) {        
         super();
+        dimNumerica=1;
+        
         DIMENSION_PATTERN = Pattern.compile(".*:.*" + StringUtils.repeat(",.*", Configuration.ITEMS_PER_DIMENSION - 1));
         this.tablero = tablero;
         dimensions = new LogicDimension[Configuration.DIMENSION_AMOUNT];
@@ -62,6 +70,24 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
         textArea.addKeyListener(this);
         this.keyTyped(null);
         add(textArea,BorderLayout.CENTER);
+       
+        combo=new JComboBox<String>();
+        combo.setSize(50, 20);
+        combo.setMinimumSize(new Dimension(50,20));
+        combo.setPreferredSize(new Dimension(50,20));
+        combo.setLocation(10, 40 );
+        for (int i = 0; i < dims.length; i++){
+            combo.addItem(dims[i]);
+        }
+        combo.setSelectedIndex(1);
+        combo.setActionCommand("COMBO");
+        combo.addActionListener(this);
+
+        dim = new JLabel("Indique cual será la dimensión númerica:");
+        dim.setSize(50, 20);
+        
+        add(combo,BorderLayout.NORTH);
+
         
         pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -72,8 +98,13 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("SIGUIENTE")) {
+        	Configuration.NUMERIC_DIMENSION=dimNumerica;
             tablero.initialize(dimensions);
             this.dispose();
+        }else if (e.getActionCommand().equals("COMBO")){
+        	dimNumerica=combo.getSelectedIndex();
+        	System.out.println(dimNumerica);
+        	
         }
     }
 
@@ -101,7 +132,7 @@ public class DimensionDataInput extends JFrame implements ActionListener, KeyLis
             buttonSiguiente.setEnabled(true);
         else
             buttonSiguiente.setEnabled(false);
-        
+        	
         this.repaint();
     }
 

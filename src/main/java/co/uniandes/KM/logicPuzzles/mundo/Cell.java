@@ -123,6 +123,7 @@ public class Cell implements CoordinatedObject{
 	
 	@Override
 	public String toString() {
-	    return coordinatesToString()+":"+status;
+		return status;
+	    //return coordinatesToString()+":"+status;
 	}
 }

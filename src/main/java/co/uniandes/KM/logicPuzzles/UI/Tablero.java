@@ -39,6 +39,9 @@ public class Tablero extends JFrame implements ActionListener {
 
     private LogicPuzzle        logicPuzzle;
 
+    private static ArrayList<String> logArray;
+    private static JList<Object> facts;
+    
     private GridBagConstraints singleCellConstraint;
     private GridBagConstraints dimensionHorizontalLabel;
     private GridBagConstraints dimensionVerticalLabel;
@@ -278,13 +281,9 @@ public class Tablero extends JFrame implements ActionListener {
         JPanel factList = new JPanel();
         factList.setLayout(new BorderLayout());
         
+        logArray = new ArrayList<String>();
         
-        String[] testData = new String[30];
-        for(int i = 0; i < 30; i++)
-        {
-            testData[ i ] = "I'm a placeholder rule. There are many like me but only i am number "+ (i+1);
-        }
-        JList<String> facts = new JList<String>(testData);
+        facts = new JList<Object>(logArray.toArray());
         JScrollPane scroll = new JScrollPane(facts);
 
         JPanel control = new JPanel();
@@ -298,6 +297,12 @@ public class Tablero extends JFrame implements ActionListener {
         factList.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         
         return factList;
+    }
+    
+    public static void addToLog(String event){
+    	logArray.add(event);
+    	facts.setListData(logArray.toArray());
+    	facts.repaint();
     }
     
     /**

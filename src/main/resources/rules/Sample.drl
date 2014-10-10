@@ -1,6 +1,7 @@
 package com.sample
 
 import co.uniandes.KM.logicPuzzles.UI.DroolsTest.Message;
+import co.uniandes.KM.logicPuzzles.UI.Tablero;
 import co.uniandes.KM.logicPuzzles.mundo.*;
 import co.uniandes.KM.logicPuzzles.Configuration;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ rule "Positive elimination"
 		cell: Cell() from neighboringCells
 	then
 		System.out.println( "Positive elimination" );
+		Tablero.addToLog("Positive elimination: \t "+c.toString());
 	 	cell.setStatus(Cell.IMPOSSIBLE);
 	 	update(cell);
 end
@@ -40,6 +42,7 @@ rule "Simple Fact Possible Cells"
 		pCell: Cell() from possibleCells
 		
 	then
+		Tablero.addToLog("Possible: \t "+pCell.coordinatesToString());
 		System.out.println( "Possible:"+ pCell.coordinatesToString() );
 		pCell.setStatus(Cell.POSSIBLE);
 	 	update(pCell);
@@ -54,6 +57,7 @@ rule "Simple Fact Impossible Cells"
 		impCell: Cell() from impossibleCells
 		
 	then
+	Tablero.addToLog("Impossible: \t " + impCell.coordinatesToString());
 		System.out.println( "Impossible:"+impCell.coordinatesToString());
 		impCell.setStatus(Cell.IMPOSSIBLE);
 	 	update(impCell);
@@ -67,6 +71,7 @@ rule "Complex Fact OR rule"
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 							     segregateCoordinates( cf.fact1 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
 	then
+	Tablero.addToLog("Complex Rule OR");
 		System.out.println( "Complex Rule OR");
 		System.out.println( "Fact:"+ cf.getFact2().coordinatesToString());
 		insert( (Fact)cf.getFact2() );
@@ -81,6 +86,7 @@ rule "Complex Fact2 OR rule"
 							from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 							     segregateCoordinates( cf.fact2 ) >= (Configuration.DIMENSION_AMOUNT - 1))) )
 	then
+	Tablero.addToLog("Complex Fact2 OR rule");
 		System.out.println( "Complex Rule2 Or rule");
 		System.out.println( "Fact:"+ cf.getFact1().coordinatesToString());
 		insert( (Fact)cf.getFact1() );
@@ -88,7 +94,7 @@ rule "Complex Fact2 OR rule"
 end
 
 rule "Complex Fact OR Same Dimension"
-//Si el or es sobre hechos de una misma dimensión ej: el número de salón del Prof.1 es 12 o el el número de salón del Prof.1 es 13.
+//Si el or es sobre hechos de una misma dimensiï¿½n ej: el nï¿½mero de salï¿½n del Prof.1 es 12 o el el nï¿½mero de salï¿½n del Prof.1 es 13.
 	when
 		cf : ComplexFact(operator==Operator.OR && cf.fact1.segregateCoordinates(cf.fact2)==2)
 		impossibleCellsF1 :  (ArrayList()
@@ -96,6 +102,7 @@ rule "Complex Fact OR Same Dimension"
 							     segregateCoordinates( cf.fact1)==1 && segregateCoordinates( cf.fact2)==1 )) )
 	     cImp: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Complex Rule OR Same dimension");
 		System.out.println( "Complex Rule OR Same dimension");
 		System.out.println( "F1 Impossible:"+ cImp.coordinatesToString());
 		cImp.setStatus(Cell.IMPOSSIBLE);
@@ -104,7 +111,7 @@ rule "Complex Fact OR Same Dimension"
 end
 
 rule "Complex Fact OR Diff Dimension"
-//Si el or es sobre hechos de dimensiones diferentes ej: el número de salón del Prof.1 es 12 o la cátedra del Prof.1 es Biología.
+//Si el or es sobre hechos de dimensiones diferentes ej: el nï¿½mero de salï¿½n del Prof.1 es 12 o la cï¿½tedra del Prof.1 es Biologï¿½a.
 // Estos dos hechos no pueden ocurri al mismo tiempo. 
 	when
 		cf : ComplexFact(operator==Operator.OR && cf.fact1.segregateCoordinates(cf.fact2)==1)
@@ -115,6 +122,7 @@ rule "Complex Fact OR Diff Dimension"
 							    ||(segregateCoordinates( cf.fact1)==2 && segregateCoordinates( cf.fact2)==2 ) ) ) ) )
 	     cImp: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Complex Rule OR Same dimension");
 		System.out.println( "Complex Rule OR Same dimension");
 		System.out.println( "F1 Impossible:"+ cImp.coordinatesToString());
 		cImp.setStatus(Cell.IMPOSSIBLE);
@@ -123,7 +131,7 @@ rule "Complex Fact OR Diff Dimension"
 end
 
 rule "Complex Fact Less rule F1-Max"
-//Si fact1 es menor que fact2, fact1 no puede ser el máximo
+//Si fact1 es menor que fact2, fact1 no puede ser el mï¿½ximo
 	when
 		cf : ComplexFact(operator==Operator.LESS 
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
@@ -132,6 +140,7 @@ rule "Complex Fact Less rule F1-Max"
 							     segregateCoordinates( cf.fact1 ) >= 1 && coordinates[1]==( Configuration.ITEMS_PER_DIMENSION-1))) )
 		cellF1: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Complex Fact Less rule F1-Max");
 		System.out.println("Complex Fact Less rule F1-Max");
 		System.out.println( "F1 Impossible:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -141,7 +150,7 @@ rule "Complex Fact Less rule F1-Max"
 end
 
 rule "Complex Fact Less rule F2-Min"
-//Si fact1 es menor que fact2, fact2 no puede ser el mínimo
+//Si fact1 es menor que fact2, fact2 no puede ser el mï¿½nimo
 	when
 		cf : ComplexFact(operator==Operator.LESS 
 					&& cf.fact1.onlyOneCoordinate() && cf.fact2.onlyOneCoordinate() )
@@ -150,6 +159,7 @@ rule "Complex Fact Less rule F2-Min"
 							     segregateCoordinates( cf.fact2 ) >= 1 && coordinates[1]==(0))) )
 		cellF2: Cell() from impossibleCellsF2
 	then
+	Tablero.addToLog("Complex Fact Less rule F2-Min");
 		System.out.println("Complex Fact Less rule F2-Min");
 		System.out.println( "F2 Impossible:"+ cellF2.coordinatesToString());
 		cellF2.setStatus(Cell.IMPOSSIBLE);
@@ -169,6 +179,7 @@ rule "Complex Fact Less rule different dimensions"
 		cellF1: Cell() from impossibleCellsF1
 
 	then
+	Tablero.addToLog("Complex Fact Less rule different dimension");
 		System.out.println("Complex Fact Less rule different dimension");
 		System.out.println( "F1 Impossible:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -197,6 +208,7 @@ rule "Complex Fact Less Than Next Max"
 						&& segregateCoordinates( cellF2 ) == 1)
 
 	then
+	Tablero.addToLog("Complex Fact Less Than Next Max");
 		System.out.println("Complex Fact Less Than Next Max");
 		System.out.println( "Fact1:"+ cf.getFact1().coordinatesToString());
 		System.out.println( "Fact2:"+ cf.getFact2().coordinatesToString());
@@ -223,6 +235,7 @@ rule "Complex Fact Less Than Next Min"
 					 && coordinates[1]==(cellF1.coordinates[1]+1) )
 
 	then
+	Tablero.addToLog("Complex Fact Less Than Next Min");
 		System.out.println("Complex Fact Less Than Next Min");
 		System.out.println( "Fact1:"+ cf.getFact1().coordinatesToString());
 		System.out.println( "Fact2:"+ cf.getFact2().coordinatesToString());
@@ -233,7 +246,7 @@ rule "Complex Fact Less Than Next Min"
 end
 
 rule "XOR Fact Same Dimensions Rule 1"
-//Los dos primeros hechos son de la misma dimensión
+//Los dos primeros hechos son de la misma dimensiï¿½n
 // Se descarta la posibilidad de que los dos segundos hechos sean iguales.
 	when
 		xf : XORFact(xf.fact1.segregateCoordinates(xf.fact2)==(Configuration.DIMENSION_AMOUNT - 1))
@@ -243,6 +256,7 @@ rule "XOR Fact Same Dimensions Rule 1"
 					
 		cellF1: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Xor Fact Same dimension");
 		System.out.println("Xor Fact Same dimension");
 		System.out.println( "F:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -250,7 +264,7 @@ rule "XOR Fact Same Dimensions Rule 1"
 end
 
 rule "XOR Fact Same Dimensions Rule 1.2"
-//Los dos segundos hechos son de la misma dimensión
+//Los dos segundos hechos son de la misma dimensiï¿½n
 // Se descarta la posibilidad de que los dos primeros hechos sean iguales.
 	when
 		xf : XORFact(xf.fact3.segregateCoordinates(xf.fact4)==(Configuration.DIMENSION_AMOUNT - 1))
@@ -260,6 +274,7 @@ rule "XOR Fact Same Dimensions Rule 1.2"
 					
 		cellF1: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Xor Fact Same dimension 1.2");
 		System.out.println("Xor Fact Same dimension 1.2");
 		System.out.println( "F:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -267,7 +282,7 @@ rule "XOR Fact Same Dimensions Rule 1.2"
 end
 
 rule "XOR Fact Same Dimensions Rule 2.1"
-//Los dos primeros hechos son de la misma dimensión.
+//Los dos primeros hechos son de la misma dimensiï¿½n.
 //Descartar esto para los dos segundos hechos.
 	when
 		xf : XORFact(xf.fact1.segregateCoordinates(xf.fact2)==(Configuration.DIMENSION_AMOUNT - 1))
@@ -278,6 +293,7 @@ rule "XOR Fact Same Dimensions Rule 2.1"
 					
 		cellF1: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Xor Fact Same dimension Rule 2.1");
 		System.out.println("Xor Fact Same dimension Rule 2.1");
 		System.out.println( "F:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -285,7 +301,7 @@ rule "XOR Fact Same Dimensions Rule 2.1"
 end
 
 rule "XOR Fact Same Dimensions Rule 2.2"
-//Los dos segundos hechos son de la misma dimensión.
+//Los dos segundos hechos son de la misma dimensiï¿½n.
 //Descartar esto para los dos primeros hechos.
 	when
 		xf : XORFact(xf.fact3.segregateCoordinates(xf.fact4)==(Configuration.DIMENSION_AMOUNT - 1))
@@ -296,6 +312,7 @@ rule "XOR Fact Same Dimensions Rule 2.2"
 					
 		cellF1: Cell() from impossibleCellsF1
 	then
+	Tablero.addToLog("Xor Fact Same dimension Rule 2.2");
 		System.out.println("Xor Fact Same dimension Rule 2.2");
 		System.out.println( "F:"+ cellF1.coordinatesToString());
 		cellF1.setStatus(Cell.IMPOSSIBLE);
@@ -311,6 +328,7 @@ rule "XOR Fact Rule 3.1"
 					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 					     segregateCoordinates( xf.fact1 ) ==1 && segregateCoordinates( xf.fact3 ) ==1 )) )
 	then
+	Tablero.addToLog("Xor false facts f1 y f3");
 		System.out.println("Xor false facts f1 y f3");		
 		insert( xf.getFact1().combineFacts(xf.getFact4()) );
 		insert( xf.getFact2().combineFacts(xf.getFact3()) );
@@ -325,6 +343,7 @@ rule "XOR Fact Rule 3.2"
 					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 					     segregateCoordinates( xf.fact2 ) ==1 && segregateCoordinates( xf.fact4 ) ==1 )) )
 	then
+	Tablero.addToLog("Xor false facts f2 y f4");
 	System.out.println("Xor false facts f2 y f4");			
 		insert( xf.getFact1().combineFacts(xf.getFact4()) );
 		insert( xf.getFact2().combineFacts(xf.getFact3()) );
@@ -339,6 +358,7 @@ rule "XOR Fact Rule 3.3"
 					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 					     segregateCoordinates( xf.fact1 ) ==1 && segregateCoordinates( xf.fact4 ) ==1 )) )
 	then
+	Tablero.addToLog("Xor false facts f1 y f4");
 	System.out.println("Xor false facts f1 y f4");			
 		insert( xf.getFact1().combineFacts(xf.getFact3()) );
 		insert( xf.getFact2().combineFacts(xf.getFact4()) );
@@ -352,7 +372,8 @@ rule "XOR Fact Rule 3.4"
 		possibleCellsF1F3 :  (ArrayList(size  == ( Configuration.ITEMS_PER_DIMENSION ))
 					from collect ( Cell ( status == Cell.IMPOSSIBLE && 
 					     segregateCoordinates( xf.fact2 ) ==1 && segregateCoordinates( xf.fact3 ) ==1 )) )
-	then	
+	then
+	Tablero.addToLog("Xor false facts f3 y f4");
 	System.out.println("Xor false facts f3 y f4");		
 		insert( xf.getFact1().combineFacts(xf.getFact3()) );
 		insert( xf.getFact2().combineFacts(xf.getFact4()) );
@@ -368,6 +389,7 @@ rule "Negative elimination 1"
 							from collect ( Cell ( (status == Cell.TRUE) &&
 							c.coordinates[0]==coordinates[0])	)	)
 	then
+	Tablero.addToLog("Negative elimination 1");
 		c.setStatus(Cell.TRUE);
 		System.out.println("True value");
 		System.out.println( "C:"+ c.coordinatesToString());
@@ -384,6 +406,7 @@ rule "Negative elimination 2"
 							from collect ( Cell ( (status == TRUE) &&
 							c.coordinates[1]==coordinates[1])	)	)
 	then
+	Tablero.addToLog("Negative elimination 2");
 		c.setStatus(Cell.TRUE);
 		System.out.println("True value");
 		System.out.println( "C:"+ c.coordinatesToString());
@@ -400,6 +423,7 @@ rule "Negative elimination 3"
 							from collect ( Cell ((status == Cell.TRUE) &&
 							c.coordinates[2]==coordinates[2])	)	)
 	then
+	Tablero.addToLog("Negative elimination 3");
 		c.setStatus(Cell.TRUE);
 		System.out.println("True value");
 		System.out.println( "C:"+ c.coordinatesToString());
